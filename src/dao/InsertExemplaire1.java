@@ -28,6 +28,8 @@ public class InsertExemplaire1 {
 		prst.setDate(1, sqlDate);
 		prst.setString(2, exemplaire.getStatus().toString());
 		prst.setString(3, exemplaire.getISBN());
+		
+		prst.execute();
 	
 		cnx.commit();
 		
