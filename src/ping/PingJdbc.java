@@ -34,8 +34,10 @@ public class PingJdbc {
 		user = properties.getProperty("user", "vide");
 		pwd = properties.getProperty("pwd", "vide");
 		
+		// Charger la première classe du driver
 		Class.forName(driver);
-
+		
+		//Ouvrir la connection
 		cnx = DriverManager.getConnection(url, user, pwd);
 		
 		cnx.setAutoCommit(false);
@@ -48,7 +50,6 @@ public class PingJdbc {
 		
 		return cnx;
 	}
-	
 
 	
 	public String getDriver(){

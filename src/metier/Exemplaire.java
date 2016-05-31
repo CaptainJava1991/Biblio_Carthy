@@ -59,6 +59,14 @@ public class Exemplaire {
 		return this.idExemplaire;
 	}
 	
+	public Date getDateAchat(){
+		return dateAchat;
+	}
+	
+	public String getISBN(){
+		return isbn;
+	}
+	
 	public void endOfEmprunt(){
 		if(emprunt != null){
 			emprunt.endOfEmprunt();
