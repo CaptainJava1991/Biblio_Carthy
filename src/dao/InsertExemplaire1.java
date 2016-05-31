@@ -29,7 +29,7 @@ public class InsertExemplaire1 {
 		prst.setString(2, exemplaire.getStatus().toString());
 		prst.setString(3, exemplaire.getISBN());
 		
-		prst.execute();
+		int nb = prst.executeUpdate();
 	
 		cnx.commit();
 		
@@ -37,6 +37,6 @@ public class InsertExemplaire1 {
 		stmt.close();
 		cnx.close();
 		
-		return 1;
+		return nb;
 	}
 }

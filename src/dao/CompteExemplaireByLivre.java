@@ -4,15 +4,16 @@ import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import metier.Exemplaire;
 import ping.PingJdbc;
 
-public class InsertExemplaire2 {
+public class CompteExemplaireByLivre {
 	
-	public int insert(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{
+	public int retrieve(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{
 		//Ouvrir la connection
 		Connection cnx = PingJdbc.getIntance();
 		
@@ -21,22 +22,19 @@ public class InsertExemplaire2 {
 		
 		
 		CallableStatement clbs = cnx.prepareCall(
-				"{Call p_new_exemplaire(?,?)}"  
+				"{Call f_compte_exemplaire(?)}"  
 				);
-		
-		java.sql.Date sqlDate = new java.sql.Date(exemplaire.getDateAchat().getTime());
-		
+				
 		clbs.setString(1, exemplaire.getISBN());
-		clbs.setDate(2, sqlDate);
 		
-		int nb = clbs.executeUpdate();
-		
+		ResultSet rs = clbs.executeQuery();
+	
 		cnx.commit();
 		
 		clbs.close();
 		stmt.close();
 		cnx.close();
 		
-		return nb;
+		return rs.getInt(1);
 	}
 }
