@@ -15,6 +15,14 @@ public class EmpruntEnCours {
 		setExemplaire(ex);
 	}
 	
+	public Utilisateur getUtlisateur(){
+		return utilisateur;
+	}
+	
+	public Exemplaire getExmeplaire(){
+		return exemplaire;
+	}
+	
 	public void setDateEmprunt(Date dateEmprunt){
 		this.dateEmprunt = dateEmprunt;
 	}
