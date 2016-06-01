@@ -8,13 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import metier.Exemplaire;
-import ping.PingJdbc;
 
 public class InsertExemplaire2 {
 	
 	public int insert(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{
 		//Ouvrir la connection
-		Connection cnx = PingJdbc.getIntance();
+		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
 		
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();

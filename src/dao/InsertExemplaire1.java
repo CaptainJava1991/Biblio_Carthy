@@ -6,14 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import ping.PingJdbc;
 import metier.Exemplaire;
 
 public class InsertExemplaire1 {
 
 	public int insert(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{
 		//Ouvrir la connection
-		Connection cnx = PingJdbc.getIntance();
+		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
 		
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();

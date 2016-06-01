@@ -1,4 +1,4 @@
-package ping;
+package dao;
 
 
 import java.io.FileInputStream;
@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 import javax.imageio.stream.FileImageInputStream;
 
 
-public class PingJdbc {
+public class ConnectionFactory {
 	private static Connection cnx = null;
 	private Statement st = null;
 	private ResultSet rs = null;
@@ -24,7 +24,7 @@ public class PingJdbc {
 	private String user;
 	private String pwd;
 	
-	private PingJdbc() throws ClassNotFoundException, SQLException, IOException{
+	private ConnectionFactory() throws ClassNotFoundException, SQLException, IOException{
 		
 		Properties properties = new Properties();
 		FileInputStream file = new FileInputStream("jdbc.properties");
@@ -40,14 +40,21 @@ public class PingJdbc {
 		//Ouvrir la connection
 		cnx = DriverManager.getConnection(url, user, pwd);
 		
-		cnx.setAutoCommit(false);
 	}
 	
-	public static Connection getIntance() throws ClassNotFoundException, SQLException, IOException{
+	public static Connection getConnection() throws ClassNotFoundException, SQLException, IOException{
 		if(cnx == null){
-			new PingJdbc();
+			new ConnectionFactory();
 		}
-		
+		cnx.setAutoCommit(true);
+		return cnx;
+	}
+	
+	public static Connection getConnectionSansAutoCommit() throws ClassNotFoundException, SQLException, IOException{
+		if(cnx == null){
+			new ConnectionFactory();
+		}
+		cnx.setAutoCommit(false);
 		return cnx;
 	}
 
