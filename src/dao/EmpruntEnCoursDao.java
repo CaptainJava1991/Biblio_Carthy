@@ -7,16 +7,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import metier.BiblioException;
 import metier.EmpruntEnCours;
 import metier.EmpruntEnCoursDB;
-import metier.Utilisateur;
 
 public class EmpruntEnCoursDao {
+	private Connection cnx;
+	
+	public EmpruntEnCoursDao(Connection cnx){
+		this.cnx = cnx;
+	}
 
-	public int insertEmpruntEnCours(EmpruntEnCours emprunt) throws ClassNotFoundException, SQLException, IOException{
-		//Ouvrir la connection
-		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
-		
+	public int insertEmpruntEnCours(EmpruntEnCours emprunt) throws ClassNotFoundException, SQLException, IOException{		
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();
 		
@@ -34,11 +36,8 @@ public class EmpruntEnCoursDao {
 		return prst.executeUpdate();
 	}
 	
-	public EmpruntEnCoursDB findByKey(int id) throws ClassNotFoundException, SQLException, IOException{
+	public EmpruntEnCoursDB findByKey(int id) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		EmpruntEnCoursDB emprunt = null;
-		
-		//Ouvrir la connection
-		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
 		
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();
@@ -58,12 +57,9 @@ public class EmpruntEnCoursDao {
 		return emprunt;
 	}
 	
-	public EmpruntEnCoursDB[] findByUtilisateur(int id) throws ClassNotFoundException, SQLException, IOException{
+	public EmpruntEnCoursDB[] findByUtilisateur(int id) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		EmpruntEnCoursDB[] emprunt = null;
 		int i = 0;
-		
-		//Ouvrir la connection
-		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
 		
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();

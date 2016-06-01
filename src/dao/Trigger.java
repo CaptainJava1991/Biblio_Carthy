@@ -9,9 +9,13 @@ import java.sql.Statement;
 import metier.Exemplaire;
 
 public class Trigger {
+	private Connection cnx;
+	
+	public Trigger(Connection cnx){
+		this.cnx = cnx;
+	}
+	
 	public int delete(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{
-		//Ouvrir la connection
-		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
 		
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();
@@ -24,12 +28,6 @@ public class Trigger {
 		prst.setInt(1, exemplaire.getIdExemplaire());
 		
 		int rs = prst.executeUpdate();
-	
-		cnx.commit();
-		
-		prst.close();
-		stmt.close();
-		cnx.close();
 		
 		return rs;
 	}

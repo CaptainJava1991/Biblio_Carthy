@@ -59,6 +59,10 @@ public class Exemplaire {
 		return this.idExemplaire;
 	}
 	
+	public void setIdExemplaire(int idExemplaire){
+		this.idExemplaire = idExemplaire;
+	}
+	
 	public Date getDateAchat(){
 		return dateAchat;
 	}

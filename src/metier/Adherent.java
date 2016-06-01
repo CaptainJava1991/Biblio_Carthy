@@ -11,7 +11,6 @@ public class Adherent extends Utilisateur {
 
 	public Adherent(String nom, String prenom, String sexe, Date date){
 		super(nom, prenom, sexe, date);
-		setTelephone(telephone);
 	}
 	
 	public String toString(){

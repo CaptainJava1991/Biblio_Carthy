@@ -33,22 +33,26 @@ public class EmpruntEnCours {
 	
 	public void setUtilisateur(Utilisateur u) throws BiblioException{
 		
+		if(u != null){
 			if(u.isConditionsPretAcceptees()){
 				this.utilisateur = u;
 				this.utilisateur.addEmpruntEnCours(this);
 			}else{
 				throw new BiblioException("Adherent ne peut pas emprunter");
 			}
+		}
 		
 	}
 	
 	public void setExemplaire(Exemplaire ex) throws BiblioException{
-		if(ex.getEmprunt() == null 
-				&& ex.getStatus() == EnumStatusExemplaire.DISPONIBLE){
-			this.exemplaire = ex;
-			this.exemplaire.setEmprunt(this);
-		}else{
-			throw new BiblioException("Ce Livre ne pas etre emprunter");
+		if(ex != null){
+			if(ex.getEmprunt() == null 
+					&& ex.getStatus() == EnumStatusExemplaire.DISPONIBLE){
+				this.exemplaire = ex;
+				this.exemplaire.setEmprunt(this);
+			}else{
+				throw new BiblioException("Ce Livre ne pas etre emprunter");
+			}
 		}
 	}
 	

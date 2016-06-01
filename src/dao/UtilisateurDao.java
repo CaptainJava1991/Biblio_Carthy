@@ -6,19 +6,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
 import metier.Adherent;
 import metier.Employe;
 import metier.Utilisateur;
 
 public class UtilisateurDao {
-
+	private Connection cnx;
+	
+	public UtilisateurDao(Connection cnx){
+		this.cnx = cnx;
+	}
+	
 	public Utilisateur findByKey(int id) throws SQLException, ClassNotFoundException, IOException{
 		Utilisateur utilisateurDao = null;
-		
-		//Ouvrir la connection
-		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
 		
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();
@@ -31,6 +32,7 @@ public class UtilisateurDao {
 		prst.setInt(1, id);
 		
 		ResultSet rs = prst.executeQuery();
+		rs.next();
 		
 		if(rs.getString("categorieutilisateur").equals("EMPLOYE")){
 			utilisateurDao = new Employe(rs.getString("nom"), rs.getString("prenom"),
@@ -55,10 +57,7 @@ public class UtilisateurDao {
 	public Utilisateur[] findAll() throws SQLException, ClassNotFoundException, IOException{
 		Utilisateur[] utilisateurDao = null;
 		int i = 0;		
-		
-		//Ouvrir la connection
-		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
-		
+				
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();
 		

@@ -9,11 +9,13 @@ import java.sql.Statement;
 import metier.Exemplaire;
 
 public class InsertExemplaire1 {
+	private Connection cnx;
+	
+	public InsertExemplaire1(Connection cnx){
+		this.cnx = cnx; 
+	}
 
 	public int insert(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{
-		//Ouvrir la connection
-		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
-		
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();
 		

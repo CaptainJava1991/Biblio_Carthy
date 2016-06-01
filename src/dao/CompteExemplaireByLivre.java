@@ -11,11 +11,14 @@ import java.sql.Statement;
 import metier.Exemplaire;
 
 public class CompteExemplaireByLivre {
+	private Connection cnx;
 	
-	public int retrieve(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{
-		//Ouvrir la connection
-		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
-		
+	public CompteExemplaireByLivre(Connection cnx){
+		this.cnx = cnx;
+	}
+	
+	
+	public int retrieve(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{		
 		//A la cnx, on demande un statement
 		Statement stmt = cnx.createStatement();
 		
