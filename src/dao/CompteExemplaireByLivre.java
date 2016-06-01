@@ -30,12 +30,9 @@ public class CompteExemplaireByLivre {
 		clbs.setString(1, exemplaire.getISBN());
 		
 		ResultSet rs = clbs.executeQuery();
-	
-		cnx.commit();
 		
 		clbs.close();
 		stmt.close();
-		cnx.close();
 		
 		return rs.getInt(1);
 	}

@@ -51,6 +51,9 @@ public class UtilisateurDao {
 			utilisateurDao.setPwd(rs.getString("pwd"));
 		}		
 		
+		prst.close();
+		stmt.close();
+		
 		return utilisateurDao;
 	}
 	
@@ -95,6 +98,10 @@ public class UtilisateurDao {
 			i++;
 		
 		}
+		
+		prst.close();
+		stmt.close();
+		
 		return utilisateurDao;	
 		
 	}

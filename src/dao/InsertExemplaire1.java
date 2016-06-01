@@ -32,11 +32,8 @@ public class InsertExemplaire1 {
 		
 		int nb = prst.executeUpdate();
 	
-		cnx.commit();
-		
 		prst.close();
 		stmt.close();
-		cnx.close();
 		
 		return nb;
 	}

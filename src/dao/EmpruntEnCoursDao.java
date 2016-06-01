@@ -33,6 +33,9 @@ public class EmpruntEnCoursDao {
 		
 		prst.setDate(3, sqlDate);
 		
+		prst.close();
+		stmt.close();
+		
 		return prst.executeUpdate();
 	}
 	
@@ -53,6 +56,9 @@ public class EmpruntEnCoursDao {
 		while(rs.next()){
 			emprunt = new EmpruntEnCoursDB(rs.getDate("dateEmprunt"), rs.getInt("idUtilisateur"), rs.getInt("idExemplaire"));
 		}
+		
+		prst.close();
+		stmt.close();
 		
 		return emprunt;
 	}
@@ -83,6 +89,9 @@ public class EmpruntEnCoursDao {
 			emprunt[i] = new EmpruntEnCoursDB(rs.getDate("dateEmprunt"), rs.getInt("idUtilisateur"), rs.getInt("idExemplaire"));
 			i++;
 		}
+		
+		prst.close();
+		stmt.close();
 		
 		return emprunt;
 	}

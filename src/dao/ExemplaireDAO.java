@@ -23,8 +23,8 @@ public class ExemplaireDAO {
 	public Exemplaire findByKey(int idExemplaire) throws SQLException{
 		Exemplaire ex = null;
 		
-		Statement stmt1 = cnx1.createStatement();
-		ResultSet rs = stmt1.executeQuery(
+		Statement stmt = cnx1.createStatement();
+		ResultSet rs = stmt.executeQuery(
 				"select idexemplaire,status, dateachat, ISBN "+
 				" FROM exemplaire where idexemplaire = " + idExemplaire);			
 		
@@ -50,6 +50,8 @@ public class ExemplaireDAO {
 			
 			
 		}
+		
+		stmt.close();
 		
 		return ex;
 			

@@ -22,12 +22,15 @@ public class Trigger {
 		
 		
 		PreparedStatement prst = cnx.prepareCall(
-				"delete from empruntencours where idexemeplaire = ?"  
+				"delete from EmpruntEncours where idExemplaire = ?"  
 				);
 				
 		prst.setInt(1, exemplaire.getIdExemplaire());
 		
 		int rs = prst.executeUpdate();
+		
+		prst.close();
+		stmt.close();
 		
 		return rs;
 	}

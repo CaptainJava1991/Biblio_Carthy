@@ -33,11 +33,8 @@ public class InsertExemplaire2 {
 		
 		int nb = clbs.executeUpdate();
 		
-		cnx.commit();
-		
 		clbs.close();
 		stmt.close();
-		cnx.close();
 		
 		return nb;
 	}
