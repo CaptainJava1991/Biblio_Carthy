@@ -33,10 +33,12 @@ public class EmpruntEnCoursDao implements EmpruntEnCoursDAOInterface {
 		
 		prst.setDate(3, sqlDate);
 		
+		int rs = prst.executeUpdate();
+		
 		prst.close();
 		stmt.close();
 		
-		return prst.executeUpdate();
+		return rs;
 	}
 	
 	public EmpruntEnCoursDB findByKey(int id) throws ClassNotFoundException, SQLException, IOException, BiblioException{

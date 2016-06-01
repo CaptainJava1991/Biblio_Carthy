@@ -22,7 +22,7 @@ public class EmprunterCtl {
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		String id = JOptionPane.showInputDialog("ID UTILISATEUR");
-		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
+		Connection cnx = ConnectionFactory.getConnection();
 		UtilisateurDao utilisateurDao = new UtilisateurDao(cnx);
 		
 		Utilisateur utilisateur = utilisateurDao.findByKey(Integer.parseInt(id));
