@@ -11,7 +11,7 @@ import metier.Adherent;
 import metier.Employe;
 import metier.Utilisateur;
 
-public class UtilisateurDao {
+public class UtilisateurDao implements UtilisateurDAOInterface{
 	private Connection cnx;
 	
 	public UtilisateurDao(Connection cnx){

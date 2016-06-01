@@ -11,7 +11,7 @@ import metier.BiblioException;
 import metier.EmpruntEnCours;
 import metier.EmpruntEnCoursDB;
 
-public class EmpruntEnCoursDao {
+public class EmpruntEnCoursDao implements EmpruntEnCoursDAOInterface {
 	private Connection cnx;
 	
 	public EmpruntEnCoursDao(Connection cnx){

@@ -12,7 +12,7 @@ import metier.Exemplaire;
 
 
 
-public class ExemplaireDAO {
+public class ExemplaireDAO implements ExemplaireDAOInterface {
 
 	Connection cnx1 = null;
 		
