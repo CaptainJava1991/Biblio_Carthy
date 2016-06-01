@@ -51,4 +51,52 @@ public class UtilisateurDao {
 		
 		return utilisateurDao;
 	}
+	
+	public Utilisateur[] findAll() throws SQLException, ClassNotFoundException, IOException{
+		Utilisateur[] utilisateurDao = null;
+		int i = 0;		
+		
+		//Ouvrir la connection
+		Connection cnx = ConnectionFactory.getConnectionSansAutoCommit();
+		
+		//A la cnx, on demande un statement
+		Statement stmt = cnx.createStatement();
+		
+		//Init le tableau
+		ResultSet rs = stmt.executeQuery("select count(*) from Utilisateur");
+		rs.next();		
+		utilisateurDao = new Utilisateur[rs.getInt(1)];
+		
+		//Requete AllUtilisateur		
+		PreparedStatement prst = cnx.prepareCall(
+				"select * from Utilisateur where idUtilisateur"  
+				);
+		
+		rs = prst.executeQuery();
+		
+		
+		while(rs.next()){
+		
+			if(rs.getString("categorieutilisateur").equals("EMPLOYE")){
+				utilisateurDao[i] = new Employe(rs.getString("nom"), rs.getString("prenom"),
+															rs.getString("sexe"), rs.getDate("datenaissance"));
+			
+				utilisateurDao[i].setIdUtilisateur(rs.getInt("idUtilisateur"));
+				utilisateurDao[i].setPseudonyme(rs.getString("pseudonyme"));
+				utilisateurDao[i].setPwd(rs.getString("pwd"));
+			}else if(rs.getString("categorieutilisateur").equals("ADHERENT")){
+				
+				utilisateurDao[i] = new Adherent(rs.getString("nom"), rs.getString("prenom"),
+						rs.getString("sexe"), rs.getDate("datenaissance"));
+						
+				utilisateurDao[i].setIdUtilisateur(rs.getInt("idUtilisateur"));
+				utilisateurDao[i].setPseudonyme(rs.getString("pseudonyme"));
+				utilisateurDao[i].setPwd(rs.getString("pwd"));
+			}		
+			i++;
+		
+		}
+		return utilisateurDao;	
+		
+	}
 }
