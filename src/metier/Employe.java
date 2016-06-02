@@ -10,6 +10,14 @@ public class Employe extends Utilisateur {
 		super(nom, prenom, sexe, date);
 	}
 	
+	public void setCategorieEmploye(EnumCategorieEmploye ece){
+		categorieEmploye = ece;
+	}
+	
+	public void setCodeMatricule(String codeMatricule){
+		this.codeMatricule = codeMatricule;
+	}
+	
 	public String toString(){
 		return "Utilisateur " 
 				+"\n\t\t Nom " + getNom()

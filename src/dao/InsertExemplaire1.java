@@ -17,9 +17,6 @@ public class InsertExemplaire1 {
 
 	public int insert(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{
 		//A la cnx, on demande un statement
-		Statement stmt = cnx.createStatement();
-		
-		
 		PreparedStatement prst = cnx.prepareStatement(
 				"insert into EXEMPLAIRE ( DATEACHAT, STATUS, ISBN) values (?,?,?)"  
 				);
@@ -33,7 +30,6 @@ public class InsertExemplaire1 {
 		int nb = prst.executeUpdate();
 	
 		prst.close();
-		stmt.close();
 		
 		return nb;
 	}

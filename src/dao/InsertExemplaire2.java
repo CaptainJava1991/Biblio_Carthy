@@ -19,9 +19,6 @@ public class InsertExemplaire2 {
 	
 	public int insert(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{		
 		//A la cnx, on demande un statement
-		Statement stmt = cnx.createStatement();
-		
-		
 		CallableStatement clbs = cnx.prepareCall(
 				"{Call p_new_exemplaire(?,?)}"  
 				);
@@ -34,7 +31,6 @@ public class InsertExemplaire2 {
 		int nb = clbs.executeUpdate();
 		
 		clbs.close();
-		stmt.close();
 		
 		return nb;
 	}

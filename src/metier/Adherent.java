@@ -9,8 +9,9 @@ public class Adherent extends Utilisateur {
 	private static int nbMaxPrets = 3;
 	private static int dureeMaxPrets = 15;
 
-	public Adherent(String nom, String prenom, String sexe, Date date){
+	public Adherent(String nom, String prenom, String sexe, Date date,String telephone){
 		super(nom, prenom, sexe, date);
+		setTelephone(telephone);
 	}
 	
 	public String toString(){

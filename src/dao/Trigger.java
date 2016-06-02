@@ -18,8 +18,6 @@ public class Trigger {
 	public int delete(Exemplaire exemplaire) throws ClassNotFoundException, SQLException, IOException{
 		
 		//A la cnx, on demande un statement
-		Statement stmt = cnx.createStatement();
-		
 		
 		PreparedStatement prst = cnx.prepareCall(
 				"delete from EmpruntEncours where idExemplaire = ?"  
@@ -30,7 +28,6 @@ public class Trigger {
 		int rs = prst.executeUpdate();
 		
 		prst.close();
-		stmt.close();
 		
 		return rs;
 	}

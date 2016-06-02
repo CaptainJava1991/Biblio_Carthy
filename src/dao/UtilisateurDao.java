@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 import metier.Adherent;
 import metier.Employe;
+import metier.EnumCategorieEmploye;
 import metier.Utilisateur;
 
 public class UtilisateurDao implements UtilisateurDAOInterface{
@@ -19,43 +20,57 @@ public class UtilisateurDao implements UtilisateurDAOInterface{
 	}
 	
 	public Utilisateur findByKey(int id) throws SQLException, ClassNotFoundException, IOException{
-		Utilisateur utilisateurDao = null;
+		Utilisateur utilisateurDAO = null;		
 		
-		//A la cnx, on demande un statement
-		Statement stmt = cnx.createStatement();
-		
-		
-		PreparedStatement prst = cnx.prepareCall(
-				"select * from Utilisateur where idUtilisateur = ?"  
-				);
-		
-		prst.setInt(1, id);
-		
-		ResultSet rs = prst.executeQuery();
-		rs.next();
-		
-		if(rs.getString("categorieutilisateur").equals("EMPLOYE")){
-			utilisateurDao = new Employe(rs.getString("nom"), rs.getString("prenom"),
-														rs.getString("sexe"), rs.getDate("datenaissance"));
-		
-			utilisateurDao.setIdUtilisateur(rs.getInt("idUtilisateur"));
-			utilisateurDao.setPseudonyme(rs.getString("pseudonyme"));
-			utilisateurDao.setPwd(rs.getString("pwd"));
-		}else if(rs.getString("categorieutilisateur").equals("ADHERENT")){
-			
-			utilisateurDao = new Adherent(rs.getString("nom"), rs.getString("prenom"),
-					rs.getString("sexe"), rs.getDate("datenaissance"));
-					
-			utilisateurDao.setIdUtilisateur(rs.getInt("idUtilisateur"));
-			utilisateurDao.setPseudonyme(rs.getString("pseudonyme"));
-			utilisateurDao.setPwd(rs.getString("pwd"));
-		}		
+		 Utilisateur utilisateur = null;
+         PreparedStatement prst = cnx.prepareStatement("SELECT * "+
+             "FROM utilisateur u "+
+             "LEFT JOIN adherent a "+
+             "ON a.idutilisateur=u.idutilisateur "+
+             "AND u.categorieutilisateur='ADHERENT' "+
+             "LEFT JOIN employe e "+
+             "ON e.idutilisateur=u.idutilisateur "+
+             "AND u.categorieutilisateur='EMPLOYE' " +
+             "WHERE u.idutilisateur=?");
+         
+         prst.setInt(1, id);
+         
+         ResultSet rs = prst.executeQuery();
+         
+         rs.next();
+         
+         if (rs.getString("CATEGORIEUTILISATEUR").equals("EMPLOYE")) {
+             Employe employe = new Employe(rs.getString("nom"), rs.getString("prenom"), rs.getString("sexe"), rs.getDate("datenaissance"));
+             employe.setIdUtilisateur(rs.getInt("idUtilisateur"));
+             employe.setPseudonyme("pseudonyme");
+             employe.setPwd("pwd");
+             employe.setCodeMatricule(rs.getString("codeMatricule"));
+             
+             if(rs.getString("categorieEmploye").equals(EnumCategorieEmploye.BIBLIOTHECAIRE.toString())){
+            	 employe.setCategorieEmploye(EnumCategorieEmploye.BIBLIOTHECAIRE);
+             }else if(rs.getString("categorieEmploye").equals(EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS.toString())) {
+            	 employe.setCategorieEmploye(EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS);
+             }else if(rs.getString("categorieEmploye").equals(EnumCategorieEmploye.RESPONSABLE.toString())) {
+            	 employe.setCategorieEmploye(EnumCategorieEmploye.RESPONSABLE);
+             }
+             
+             return employe;         
+         }else if (rs.getString("CATEGORIEUTILISATEUR").equals("ADHERENT")) {
+             Adherent adherent = new Adherent(rs.getString("nom"), rs.getString("prenom"),
+            		 							rs.getString("sexe"), rs.getDate("datenaissance"), rs.getString("telephone"));
+             adherent.setIdUtilisateur(rs.getInt("idUtilisateur"));
+             adherent.setPseudonyme("pseudonyme");
+             adherent.setPwd("pwd");
+             
+             return adherent;
+         }
 		
 		prst.close();
-		stmt.close();
 		
-		return utilisateurDao;
+		return null;
 	}
+	
+	
 	
 	public Utilisateur[] findAll() throws SQLException, ClassNotFoundException, IOException{
 		Utilisateur[] utilisateurDao = null;
@@ -79,22 +94,31 @@ public class UtilisateurDao implements UtilisateurDAOInterface{
 		
 		while(rs.next()){
 		
-			if(rs.getString("categorieutilisateur").equals("EMPLOYE")){
-				utilisateurDao[i] = new Employe(rs.getString("nom"), rs.getString("prenom"),
-															rs.getString("sexe"), rs.getDate("datenaissance"));
-			
-				utilisateurDao[i].setIdUtilisateur(rs.getInt("idUtilisateur"));
-				utilisateurDao[i].setPseudonyme(rs.getString("pseudonyme"));
-				utilisateurDao[i].setPwd(rs.getString("pwd"));
-			}else if(rs.getString("categorieutilisateur").equals("ADHERENT")){
-				
-				utilisateurDao[i] = new Adherent(rs.getString("nom"), rs.getString("prenom"),
-						rs.getString("sexe"), rs.getDate("datenaissance"));
-						
-				utilisateurDao[i].setIdUtilisateur(rs.getInt("idUtilisateur"));
-				utilisateurDao[i].setPseudonyme(rs.getString("pseudonyme"));
-				utilisateurDao[i].setPwd(rs.getString("pwd"));
-			}		
+	         if (rs.getString("CATEGORIEUTILISATEUR").equals("EMPLOYE")) {
+	             Employe employe = new Employe(rs.getString("nom"), rs.getString("prenom"), rs.getString("sexe"), rs.getDate("datenaissance"));
+	             employe.setIdUtilisateur(rs.getInt("idUtilisateur"));
+	             employe.setPseudonyme("pseudonyme");
+	             employe.setPwd("pwd");
+	             employe.setCodeMatricule(rs.getString("codeMatricule"));
+	             
+	             if(rs.getString("categorieEmploye").equals(EnumCategorieEmploye.BIBLIOTHECAIRE.toString())){
+	            	 employe.setCategorieEmploye(EnumCategorieEmploye.BIBLIOTHECAIRE);
+	             }else if(rs.getString("categorieEmploye").equals(EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS.toString())) {
+	            	 employe.setCategorieEmploye(EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS);
+	             }else if(rs.getString("categorieEmploye").equals(EnumCategorieEmploye.RESPONSABLE.toString())) {
+	            	 employe.setCategorieEmploye(EnumCategorieEmploye.RESPONSABLE);
+	             }
+	             
+	             utilisateurDao[i] = employe;         
+	         }else if (rs.getString("CATEGORIEUTILISATEUR").equals("ADHERENT")) {
+	             Adherent adherent = new Adherent(rs.getString("nom"), rs.getString("prenom"),
+	            		 							rs.getString("sexe"), rs.getDate("datenaissance"), rs.getString("telephone"));
+	             adherent.setIdUtilisateur(rs.getInt("idUtilisateur"));
+	             adherent.setPseudonyme("pseudonyme");
+	             adherent.setPwd("pwd");
+	             
+	             utilisateurDao[i] = adherent;
+	         }		
 			i++;
 		
 		}
