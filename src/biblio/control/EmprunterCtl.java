@@ -15,7 +15,7 @@ import metier.Utilisateur;
 import dao.ConnectionFactory;
 import dao.EmpruntEnCoursDao;
 import dao.ExemplaireDAO;
-import dao.UtilisateurDao;
+import dao.UtilisateurDAO;
 
 public class EmprunterCtl {
 	
@@ -23,7 +23,7 @@ public class EmprunterCtl {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		String id = JOptionPane.showInputDialog("ID UTILISATEUR");
 		Connection cnx = ConnectionFactory.getConnection();
-		UtilisateurDao utilisateurDao = new UtilisateurDao(cnx);
+		UtilisateurDAO utilisateurDao = new UtilisateurDAO(cnx);
 		
 		Utilisateur utilisateur = utilisateurDao.findByKey(Integer.parseInt(id));
 		
