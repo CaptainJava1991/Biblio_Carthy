@@ -27,6 +27,8 @@ public class Adherent extends Utilisateur {
 	}
 
 	public void setTelephone(String telephone) {
+		telephone = telephone.replace(" ", "");
+		telephone = telephone.replace(".", "");
 		for(int i = 0; i < telephone.length(); i++){
 			if(!Character.isDigit(telephone.charAt(i))){
 				try {

@@ -2,6 +2,8 @@ package biblio.control;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -38,7 +40,13 @@ public class EmprunterCtl {
 			System.out.println(empruntEnCoursDB[i].toString());
 		}
 		
-		if(utilisateur.isConditionsPretAcceptees()){
+		PreparedStatement prst = cnx.prepareStatement("select count(*) from empruntencours where idUtilisateur = " + utilisateur.getIdUtilisateur());
+		
+		ResultSet rs = prst.executeQuery();
+		
+		rs.next();
+		
+		if(rs.getInt(1) < 3){
 			id = JOptionPane.showInputDialog("ID EXEMPLAIRE");
 			ExemplaireDAO exemplaireDao = new ExemplaireDAO(cnx);
 			
@@ -47,8 +55,10 @@ public class EmprunterCtl {
 			System.out.println(exemplaire.toString());
 			
 			if(exemplaire.getStatus().toString().equals("DISPONIBLE")){
+				
 				EmpruntEnCours newEmprunt = new EmpruntEnCours(new Date(), utilisateur, exemplaire);
 				empruntDao.insertEmpruntEnCours(newEmprunt);
+				System.out.println(exemplaire.toString());
 			}else{
 				System.err.println("Exemplaire n'est pas disponible");
 			}

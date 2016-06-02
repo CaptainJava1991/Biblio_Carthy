@@ -20,7 +20,13 @@ public class EmpruntEnCoursDao implements EmpruntEnCoursDAOInterface {
 
 	public int insertEmpruntEnCours(EmpruntEnCours emprunt) throws ClassNotFoundException, SQLException, IOException{		
 		//A la cnx, on demande un statement
-		PreparedStatement prst = cnx.prepareCall(
+		
+		PreparedStatement prst = cnx.prepareStatement("Update EXEMPLAIRE set status = 'PRETE' where idExemplaire = " 
+														+ emprunt.getExmeplaire().getIdExemplaire());
+		
+		prst.execute();
+		
+		prst = cnx.prepareCall(
 				"insert into EmpruntEncours (idExemplaire,idUtilisateur,dateEmprunt) values (?,?,?)"  
 				);
 		

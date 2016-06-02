@@ -47,7 +47,7 @@ public class EmpruntEnCours {
 	public void setExemplaire(Exemplaire ex) throws BiblioException{
 		if(ex != null){
 			if(ex.getEmprunt() == null 
-					&& ex.getStatus() == EnumStatusExemplaire.DISPONIBLE){
+					|| ex.getStatus() == EnumStatusExemplaire.DISPONIBLE){
 				this.exemplaire = ex;
 				this.exemplaire.setEmprunt(this);
 			}else{
