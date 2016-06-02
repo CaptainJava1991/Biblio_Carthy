@@ -12,10 +12,10 @@ import metier.Employe;
 import metier.EnumCategorieEmploye;
 import metier.Utilisateur;
 
-public class UtilisateurDao implements UtilisateurDAOInterface {
+public class UtilisateurDAO implements UtilisateurDAOInterface {
 	private Connection cnx;
 
-	public UtilisateurDao(Connection cnx) {
+	public UtilisateurDAO(Connection cnx) {
 		this.cnx = cnx;
 	}
 
@@ -149,7 +149,7 @@ public class UtilisateurDao implements UtilisateurDAOInterface {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
 
 		Connection cnx = ConnectionFactory.getConnection();
-		UtilisateurDao utilisateurDao = new UtilisateurDao(cnx);
+		UtilisateurDAO utilisateurDao = new UtilisateurDAO(cnx);
 		Utilisateur[] utilisateurTab = utilisateurDao.findAll();
 		
 		for(Utilisateur u : utilisateurTab){
