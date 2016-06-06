@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import biblio.control.UtilisateurDAOInterface;
 import metier.Adherent;
 import metier.Employe;
 import metier.EnumCategorieEmploye;
@@ -146,15 +147,4 @@ public class UtilisateurDAO implements UtilisateurDAOInterface {
 
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
-
-		Connection cnx = ConnectionFactory.getConnection();
-		UtilisateurDAO utilisateurDao = new UtilisateurDAO(cnx);
-		Utilisateur[] utilisateurTab = utilisateurDao.findAll();
-		
-		for(Utilisateur u : utilisateurTab){
-			System.out.println(u);
-		}
-		
-	}
 }

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import biblio.control.EmpruntEnCoursDAOInterface;
 import metier.BiblioException;
 import metier.EmpruntEnCours;
 import metier.EmpruntEnCoursDB;

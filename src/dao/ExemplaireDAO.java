@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import biblio.control.ExemplaireDAOInterface;
 import metier.EnumStatusExemplaire;
 import metier.Exemplaire;
 

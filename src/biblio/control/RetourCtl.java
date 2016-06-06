@@ -23,7 +23,7 @@ public class RetourCtl {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException, BiblioException {
 		String id = JOptionPane.showInputDialog("ID EXEMPLAIRE");
-		Connection cnx = ConnectionFactory.getConnection();
+		Connection cnx = ConnectionFactory.getConnection("jdbc.properties");
 		
 		ExemplaireDAO exemplaireDAO = new ExemplaireDAO(cnx);
 		

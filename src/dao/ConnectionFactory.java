@@ -24,10 +24,10 @@ public class ConnectionFactory {
 	private String user;
 	private String pwd;
 	
-	private ConnectionFactory() throws ClassNotFoundException, SQLException, IOException{
+	private ConnectionFactory(String url) throws ClassNotFoundException, SQLException, IOException{
 		
 		Properties properties = new Properties();
-		FileInputStream file = new FileInputStream("jdbc.properties");
+		FileInputStream file = new FileInputStream(url);
 		properties.load(file);
 		driver = properties.getProperty("driver", "vide");
 		url = properties.getProperty("url", "vide");
@@ -42,17 +42,17 @@ public class ConnectionFactory {
 		
 	}
 	
-	public static Connection getConnection() throws ClassNotFoundException, SQLException, IOException{
+	public static Connection getConnection(String url) throws ClassNotFoundException, SQLException, IOException{
 		if(cnx == null){
-			new ConnectionFactory();
+			new ConnectionFactory(url);
 		}
 		cnx.setAutoCommit(true);
 		return cnx;
 	}
 	
-	public static Connection getConnectionSansAutoCommit() throws ClassNotFoundException, SQLException, IOException{
+	public static Connection getConnectionSansAutoCommit(String url) throws ClassNotFoundException, SQLException, IOException{
 		if(cnx == null){
-			new ConnectionFactory();
+			new ConnectionFactory(url);
 		}
 		cnx.setAutoCommit(false);
 		return cnx;

@@ -1,4 +1,4 @@
-package dao;
+package biblio.control;
 
 import java.sql.SQLException;
 

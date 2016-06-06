@@ -24,7 +24,7 @@ public class EmprunterCtl {
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		String id = JOptionPane.showInputDialog("ID UTILISATEUR");
-		Connection cnx = ConnectionFactory.getConnection();
+		Connection cnx = ConnectionFactory.getConnection("jdbc.properties");
 		UtilisateurDAO utilisateurDao = new UtilisateurDAO(cnx);
 		
 		Utilisateur utilisateur = utilisateurDao.findByKey(Integer.parseInt(id));
