@@ -45,8 +45,8 @@ public class UtilisateurDAO implements UtilisateurDAOInterface {
 					rs.getString("prenom"), rs.getString("sexe"),
 					rs.getDate("datenaissance"));
 			employe.setIdUtilisateur(rs.getInt("idUtilisateur"));
-			employe.setPseudonyme("pseudonyme");
-			employe.setPwd("pwd");
+			employe.setPseudonyme(rs.getString("pseudonyme"));
+			employe.setPwd(rs.getString("pwd"));
 			employe.setCodeMatricule(rs.getString("codeMatricule"));
 
 			if (rs.getString("categorieEmploye").equals(
@@ -66,8 +66,8 @@ public class UtilisateurDAO implements UtilisateurDAOInterface {
 					rs.getString("prenom"), rs.getString("sexe"),
 					rs.getDate("datenaissance"), rs.getString("telephone"));
 			adherent.setIdUtilisateur(rs.getInt("idUtilisateur"));
-			adherent.setPseudonyme("pseudonyme");
-			adherent.setPwd("pwd");
+			adherent.setPseudonyme(rs.getString("pseudonyme"));
+			adherent.setPwd(rs.getString("pwd"));
 
 			return adherent;
 		}
@@ -109,8 +109,8 @@ public class UtilisateurDAO implements UtilisateurDAOInterface {
 						rs.getString("prenom"), rs.getString("sexe"),
 						rs.getDate("datenaissance"));
 				employe.setIdUtilisateur(rs.getInt("idUtilisateur"));
-				employe.setPseudonyme("pseudonyme");
-				employe.setPwd("pwd");
+				employe.setPseudonyme(rs.getString("pseudonyme"));
+				employe.setPwd(rs.getString("pwd"));
 				employe.setCodeMatricule(rs.getString("codeMatricule"));
 
 				if (rs.getString("categorieEmploye").equals(
@@ -131,8 +131,8 @@ public class UtilisateurDAO implements UtilisateurDAOInterface {
 						rs.getDate("datenaissance"),
 						rs.getString("telephone"));
 				adherent.setIdUtilisateur(rs.getInt("idUtilisateur"));
-				adherent.setPseudonyme("pseudonyme");
-				adherent.setPwd("pwd");
+				adherent.setPseudonyme(rs.getString("pseudonyme"));
+				adherent.setPwd(rs.getString("pwd"));
 
 				utilisateurDao[i] = adherent;
 			}
