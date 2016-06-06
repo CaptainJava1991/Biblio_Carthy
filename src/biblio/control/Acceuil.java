@@ -135,8 +135,8 @@ public class Acceuil {
 		panel.add(btnValide);
 	}
 	
-	public void uninitAcceuilPanel(JPanel){
-		panel.add(btnValide);
+	public void removeAll(JPanel panel){
+		panel.removeAll();
 	}
 
 	
