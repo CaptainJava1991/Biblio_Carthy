@@ -75,7 +75,7 @@ public class Adherent extends Utilisateur {
 	
 	@Override
 	public boolean isConditionsPretAcceptees(){
-		return ((getNbRetards() == 0 && getEmpruntEnCours().size() < nbMaxPrets)? 
+		return ((getNbRetards() <= 1 && getEmpruntEnCours().size() < nbMaxPrets)? 
 				true : false);
 	}
 	

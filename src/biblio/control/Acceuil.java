@@ -253,7 +253,7 @@ public class Acceuil {
 			public void mouseClicked(MouseEvent e) {
 				try {
 					Utilisateur utilisateur = retreveUtulisateur(Integer.parseInt(txtId.getText()));
-					if(isConditionPretAccepter(utilisateur)){
+					if(isConditionsPretAcceptees(utilisateur)){
 						
 						EmpruntEnCours emprunt = new EmpruntEnCours(new Date(), utilisateur, exemplaire2);
 						EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
@@ -297,7 +297,7 @@ public class Acceuil {
 		return exemplaireDAO.findByKey(idExemplaire);
 	}
 
-	public boolean isConditionPretAccepter(Utilisateur utilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
+	public boolean isConditionsPretAcceptees(Utilisateur utilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
 		EmpruntEnCoursDB[] tabEmprunt = empruntDAO.findByUtilisateur(utilisateur.getIdUtilisateur());
 		for(int i = 0; i < tabEmprunt.length; i++){
