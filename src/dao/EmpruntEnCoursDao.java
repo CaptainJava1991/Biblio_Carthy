@@ -12,10 +12,10 @@ import metier.BiblioException;
 import metier.EmpruntEnCours;
 import metier.EmpruntEnCoursDB;
 
-public class EmpruntEnCoursDao implements EmpruntEnCoursDAOInterface {
+public class EmpruntEnCoursDAO implements EmpruntEnCoursDAOInterface {
 	private Connection cnx;
 	
-	public EmpruntEnCoursDao(Connection cnx){
+	public EmpruntEnCoursDAO(Connection cnx){
 		this.cnx = cnx;
 	}
 
@@ -45,7 +45,7 @@ public class EmpruntEnCoursDao implements EmpruntEnCoursDAOInterface {
 		return rs;
 	}
 	
-	public EmpruntEnCoursDB findByKey(int id) throws ClassNotFoundException, SQLException, IOException, BiblioException{
+	public EmpruntEnCoursDB findByKey(int idExemplaire) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		EmpruntEnCoursDB emprunt = null;
 		
 		//A la cnx, on demande un statement
@@ -53,7 +53,7 @@ public class EmpruntEnCoursDao implements EmpruntEnCoursDAOInterface {
 				"select * from EmpruntEncours where idExemplaire = ?"  
 				);
 		
-		prst.setInt(1, id);
+		prst.setInt(1, idExemplaire);
 		
 		ResultSet rs = prst.executeQuery();
 		
