@@ -15,7 +15,7 @@ import metier.EmpruntEnCoursDB;
 import metier.Exemplaire;
 import metier.Utilisateur;
 import dao.ConnectionFactory;
-import dao.EmpruntEnCoursDao;
+import dao.EmpruntEnCoursDAO;
 import dao.ExemplaireDAO;
 import dao.UtilisateurDAO;
 
@@ -31,7 +31,7 @@ public class EmprunterCtl {
 		
 		System.out.println(utilisateur.toString());
 		
-		EmpruntEnCoursDao empruntDao = new EmpruntEnCoursDao(cnx);
+		EmpruntEnCoursDAO empruntDao = new EmpruntEnCoursDAO(cnx);
 		EmpruntEnCoursDB[] empruntEnCoursDB = empruntDao.findByUtilisateur(utilisateur.getIdUtilisateur());
 		
 		System.out.println("Nombre d'emprunt en cours: " + empruntEnCoursDB.length);

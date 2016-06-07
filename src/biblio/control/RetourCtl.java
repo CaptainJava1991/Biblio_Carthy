@@ -14,7 +14,7 @@ import metier.EnumStatusExemplaire;
 import metier.Exemplaire;
 import metier.Utilisateur;
 import dao.ConnectionFactory;
-import dao.EmpruntEnCoursDao;
+import dao.EmpruntEnCoursDAO;
 import dao.ExemplaireDAO;
 import dao.Trigger;
 import dao.UtilisateurDAO;

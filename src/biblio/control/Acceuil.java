@@ -15,8 +15,14 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JList;
 
+import metier.BiblioException;
+import metier.EmpruntEnCoursDB;
+import metier.EnumStatusExemplaire;
+import metier.Exemplaire;
 import metier.Utilisateur;
 import dao.ConnectionFactory;
+import dao.EmpruntEnCoursDAO;
+import dao.ExemplaireDAO;
 import dao.UtilisateurDAO;
 
 import java.awt.event.MouseAdapter;
@@ -28,6 +34,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
@@ -38,10 +45,12 @@ import javax.swing.JPanel;
 
 public class Acceuil {
 	
-	Connection cnx ;
+	private Connection cnx ;
 	private JFrame frame;
 	private JTextField txtId;
 	private JTextField txtPassword;
+	private JPanel panel;
+	private JTextField txtRechercher;
 
 	/**
 	 * Launch the application.
@@ -83,15 +92,16 @@ public class Acceuil {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
-		
-		JPanel panel = new JPanel();
+		Container panell = frame.getContentPane();
+		panel = new JPanel();
 		frame.getContentPane().add(panel);
 		
-		initAcceuilPanel(panel);
-
+		initAcceuilPanel();
 	}
 	
-	public void initAcceuilPanel(JPanel panel){
+	private void initAcceuilPanel(){
+		removeAll();
+		
 		JLabel lblId = new JLabel("ID");
 		panel.add(lblId);
 		
@@ -125,7 +135,7 @@ public class Acceuil {
 				}
 				
 				if(utilisateur.getPwd().equals(txtPassword.getText())){
-					Menu.main(null);
+					initEmpruntRendrePanel();;
 				}else{
 					txtPassword.setText("ERREUR");
 				}
@@ -133,16 +143,137 @@ public class Acceuil {
 		});
 		
 		panel.add(btnValide);
+		
+		panel.updateUI();
 	}
 	
-	public void removeAll(JPanel panel){
+	private void initEmpruntRendrePanel(){
+		removeAll();
+		
+		JButton btnEmprunter = new JButton("Emprunter");
+		btnEmprunter.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				EmprunterLivre();
+			}
+		});
+		panel.add(btnEmprunter);
+		
+		JButton btnRendre = new JButton("Rendre");
+		btnRendre.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		panel.add(btnRendre);
+		
+		JButton btnRetour = new JButton("Retour");
+		btnRetour.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				initAcceuilPanel();
+			}
+		});
+		panel.add(btnRetour);
+		
+		panel.updateUI();
+	}
+	
+	private void EmprunterLivre(){
+		removeAll();
+		
+		final JLabel lbl = new JLabel(".............");
+		panel.add(lbl);
+		
+		JLabel lblId = new JLabel("IDExemplaire");
+		panel.add(lblId);
+		
+		txtRechercher = new JTextField();
+		panel.add(txtRechercher);
+		txtRechercher.setColumns(10);
+		
+		JButton btnValider = new JButton("Valider");
+		btnValider.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Exemplaire exemplaire = null;
+				try {
+					exemplaire = retreveExemplaire(Integer.parseInt(txtRechercher.getText()));
+				} catch (NumberFormatException | SQLException e1) {
+					txtRechercher.setText("ERREUR");
+					e1.printStackTrace();
+				}
+				
+				if(exemplaire != null && exemplaire.getStatus() == EnumStatusExemplaire.DISPONIBLE ){
+					EmprunterUtilisateur();
+				}else{
+					txtRechercher.setText("NON DISPONIBLE");
+				}
+			}
+		});
+		panel.add(btnValider);
+		
+
+		
+		panel.updateUI();
+	}
+	
+	private void EmprunterUtilisateur(){
+		removeAll();
+		
+		JLabel lblIdutilisateur = new JLabel("IDUtilisateur");
+		panel.add(lblIdutilisateur);
+		
+		txtId = new JTextField();
+		panel.add(txtId);
+		txtId.setColumns(10);
+		
+		JButton btnValider = new JButton("Valider");
+		btnValider.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					if(isConditionPretEnRetard(Integer.parseInt(txtId.getText()))){
+						
+					}
+				} catch (NumberFormatException | ClassNotFoundException
+						| SQLException | IOException | BiblioException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		panel.add(btnValider);
+		
+		panel.updateUI();
+	}
+
+	
+	public void removeAll(){
 		panel.removeAll();
 	}
 
+	
 	
 	public Utilisateur retreveUtulisateur(int id) throws ClassNotFoundException, SQLException, IOException{
 		UtilisateurDAO utilisateurDAO = new UtilisateurDAO(cnx); 
 		return utilisateurDAO.findByKey(id);
 	}
 
+	public Exemplaire retreveExemplaire(int idExemplaire) throws SQLException{
+		ExemplaireDAO exemplaireDAO = new ExemplaireDAO(cnx);
+		return exemplaireDAO.findByKey(idExemplaire);
+	}
+
+	public int retreveNbExemplaire(int idUtilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
+		EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
+		EmpruntEnCoursDB[] tabEmprunt = empruntDAO.findByUtilisateur(idUtilisateur);
+		
+		return tabEmprunt.length;
+	}
+	
+	public boolean isConditionPretEnRetard(int IDUtilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
+		
+		return (retreveNbExemplaire(IDUtilisateur) >= 3)? false : true;
+	}
 }
