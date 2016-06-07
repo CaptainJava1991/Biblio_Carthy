@@ -1,0 +1,657 @@
+SQL> 
+SQL> -- Pas d'affichage des substitutions de variable
+SQL> SET VERIFY OFF
+SQL> 
+SQL> -- Sortir en cas d'erreur SQL
+SQL> WHENEVER SQLERROR EXIT ROLLBACK
+SQL> WHENEVER OSERROR EXIT ROLLBACK
+SQL> 
+SQL> @p_new_archive
+SQL> CREATE OR REPLACE
+  2  PROCEDURE p_new_archive(
+  3  	 p_dateemprunt	 IN empruntarchive.dateemprunt%type,
+  4  	 p_idexemplaire  IN empruntarchive.idexemplaire%type,
+  5  	 p_idutilisateur IN empruntarchive.idutilisateur%type)
+  6  AS
+  7    chiffre NUMBER;
+  8  BEGIN
+  9    --VERIF DE L EXISTENCE DE cet exemplaire
+ 10    SELECT COUNT(*)
+ 11    INTO chiffre
+ 12    FROM exemplaire
+ 13    WHERE idexemplaire=p_idexemplaire;
+ 14    IF chiffre	 <1 THEN
+ 15  	 ROLLBACK;
+ 16  	 raise_application_error(-20015,'IDEXEMPLAIRE inconnu');
+ 17    END IF;
+ 18    --VERIF DE L EXISTENCE DE cet utilisateur
+ 19    SELECT COUNT(*)
+ 20    INTO chiffre
+ 21    FROM utilisateur
+ 22    WHERE idutilisateur=p_idutilisateur;
+ 23    IF chiffre	  <1 THEN
+ 24  	 ROLLBACK;
+ 25  	 raise_application_error(-20016,'IDUTILISATEUR inconnu');
+ 26    END IF;
+ 27    INSERT
+ 28    INTO empruntarchive
+ 29  	 (
+ 30  	   idEmpruntArchive,
+ 31  	   dateemprunt,
+ 32  	   daterestitutioneff,
+ 33  	   idexemplaire,
+ 34  	   idutilisateur
+ 35  	 )
+ 36  	 VALUES
+ 37  	 (
+ 38  	   seq_archive.nextval,
+ 39  	   p_dateemprunt,
+ 40  	   sysdate,
+ 41  	   p_idexemplaire,
+ 42  	   p_idutilisateur
+ 43  	 );
+ 44  END p_new_archive;
+ 45  /
+
+Procédure créée.
+
+SQL> show errors
+Pas d'erreur.
+SQL> -- ############# Tests unitaires
+SQL> SELECT * FROM empruntarchive;
+
+IDEMPRUNTARCHIVE DATEEMPR DATEREST IDEXEMPLAIRE IDUTILISATEUR                   
+---------------- -------- -------- ------------ -------------                   
+               1 10/05/02 18/05/02            1             1                   
+               2 10/03/08 02/03/08            2             3                   
+               3 03/08/02 23/07/02            4             6                   
+               4 03/11/07 25/10/07            5             1                   
+
+SQL> EXECUTE p_new_archive(SYSDATE, 1, 1);
+
+Procédure PL/SQL terminée avec succès.
+
+SQL> SELECT * FROM empruntarchive;
+
+IDEMPRUNTARCHIVE DATEEMPR DATEREST IDEXEMPLAIRE IDUTILISATEUR                   
+---------------- -------- -------- ------------ -------------                   
+               1 10/05/02 18/05/02            1             1                   
+               2 10/03/08 02/03/08            2             3                   
+               3 03/08/02 23/07/02            4             6                   
+               4 03/11/07 25/10/07            5             1                   
+               5 02/06/16 02/06/16            1             1                   
+
+SQL> ROLLBACK;
+
+Annulation (rollback) effectuée.
+
+SQL> @p_new_exemplaire
+SQL> CREATE OR REPLACE
+  2  PROCEDURE p_new_exemplaire(
+  3  	 p_isbn      IN exemplaire.isbn%TYPE ,
+  4  	 p_dateachat IN exemplaire.dateachat%TYPE )
+  5  AS
+  6    test_validite INTEGER;
+  7  BEGIN
+  8    -- Test validité 'p_isbn'
+  9    SELECT COUNT(*)
+ 10    INTO test_validite
+ 11    FROM livre
+ 12    WHERE isbn	= p_isbn;
+ 13    IF test_validite = 0 THEN
+ 14  	 ROLLBACK;
+ 15  	 RAISE_APPLICATION_ERROR(-20014, 'Livre ISBN n° ' || p_isbn || ' inconnu');
+ 16    END IF;
+ 17    -- Insertion de 'exemplaire'
+ 18    INSERT
+ 19    INTO exemplaire VALUES
+ 20  	 (
+ 21  	   seq_exemplaire.nextval,
+ 22  	   p_dateachat,
+ 23  	       'DISPONIBLE',
+ 24  	       p_isbn
+ 25  	 );
+ 26  END p_new_exemplaire;
+ 27  /
+
+Procédure créée.
+
+SQL> show errors
+Pas d'erreur.
+SQL> -- ############# Tests unitaires
+SQL> SELECT * FROM exemplaire;
+
+IDEXEMPLAIRE DATEACHA STATUS          ISBN                                      
+------------ -------- --------------- ----------------                          
+           1 21/03/01 PRETE           1520068789                                
+           2 19/11/99 DISPONIBLE      2320063289                                
+           3 25/11/03 PRETE           3000066589                                
+           4 15/04/00 DISPONIBLE      1630014789                                
+           5 02/06/00 DISPONIBLE      3236506659                                
+           6 19/03/00 PRETE           3200066559                                
+           7 21/03/01 DISPONIBLE      1520068789                                
+           8 21/03/01 DISPONIBLE      3200066559                                
+
+8 ligne(s) sélectionnée(s).
+
+SQL> --EXECUTE p_new_exemplaire('978-2264024848', SYSDATE);
+SQL> --EXECUTE p_new_exemplaire('978-2253057840', SYSDATE);
+SQL> EXECUTE p_new_exemplaire('1520068789', SYSDATE);
+
+Procédure PL/SQL terminée avec succès.
+
+SQL> EXECUTE p_new_exemplaire('1520068789', SYSDATE);
+
+Procédure PL/SQL terminée avec succès.
+
+SQL> 
+SQL> SELECT * FROM exemplaire;
+
+IDEXEMPLAIRE DATEACHA STATUS          ISBN                                      
+------------ -------- --------------- ----------------                          
+           1 21/03/01 PRETE           1520068789                                
+           2 19/11/99 DISPONIBLE      2320063289                                
+           3 25/11/03 PRETE           3000066589                                
+           4 15/04/00 DISPONIBLE      1630014789                                
+           5 02/06/00 DISPONIBLE      3236506659                                
+           6 19/03/00 PRETE           3200066559                                
+           7 21/03/01 DISPONIBLE      1520068789                                
+           8 21/03/01 DISPONIBLE      3200066559                                
+           9 02/06/16 DISPONIBLE      1520068789                                
+          10 02/06/16 DISPONIBLE      1520068789                                
+
+10 ligne(s) sélectionnée(s).
+
+SQL> ROLLBACK;
+
+Annulation (rollback) effectuée.
+
+SQL> @p_suppr_exemplaire
+SQL> CREATE OR REPLACE
+  2  PROCEDURE p_suppr_exemplaire(
+  3  	 p_idExemplaire IN exemplaire.idExemplaire%TYPE)
+  4  AS
+  5    test_validite INTEGER;
+  6  BEGIN
+  7    -- Test validité 'p_idExemplaire'
+  8    SELECT COUNT(*)
+  9    INTO test_validite
+ 10    FROM exemplaire
+ 11    WHERE idExemplaire = p_idExemplaire;
+ 12    IF test_validite   = 0 THEN
+ 13  	 ROLLBACK;
+ 14  	 RAISE_APPLICATION_ERROR(-20015, 'Exemplaire n° ' || p_idExemplaire || ' inconnu');
+ 15    END IF;
+ 16    -- Suppression des 'empruntencours' et 'empruntarchive'
+ 17    DELETE
+ 18    FROM empruntencours
+ 19    WHERE idexemplaire = p_idexemplaire;
+ 20    DELETE FROM empruntarchive WHERE idexemplaire = p_idexemplaire;
+ 21    -- Update du 'status de 'exemplaire' a 'supprime'
+ 22    UPDATE exemplaire
+ 23    SET status	  = 'SUPPRIME'
+ 24    WHERE idexemplaire = p_idexemplaire;
+ 25  END p_suppr_exemplaire;
+ 26  /
+
+Procédure créée.
+
+SQL> show errors
+Pas d'erreur.
+SQL> -- ############# Tests unitaires
+SQL> SELECT *
+  2  FROM exemplaire
+  3  WHERE idexemplaire = 1
+  4  OR idexemplaire	= 4;
+
+IDEXEMPLAIRE DATEACHA STATUS          ISBN                                      
+------------ -------- --------------- ----------------                          
+           1 21/03/01 PRETE           1520068789                                
+           4 15/04/00 DISPONIBLE      1630014789                                
+
+SQL> SELECT * FROM empruntencours WHERE idexemplaire = 1 OR idexemplaire = 4;
+
+IDEXEMPLAIRE IDUTILISATEUR DATEEMPR                                             
+------------ ------------- --------                                             
+           1             1 20/10/09                                             
+
+SQL> SELECT * FROM empruntarchive WHERE idexemplaire = 1 OR idexemplaire = 4;
+
+IDEMPRUNTARCHIVE DATEEMPR DATEREST IDEXEMPLAIRE IDUTILISATEUR                   
+---------------- -------- -------- ------------ -------------                   
+               1 10/05/02 18/05/02            1             1                   
+               3 03/08/02 23/07/02            4             6                   
+
+SQL> EXECUTE p_suppr_exemplaire(1);
+
+Procédure PL/SQL terminée avec succès.
+
+SQL> EXECUTE p_suppr_exemplaire(4);
+
+Procédure PL/SQL terminée avec succès.
+
+SQL> SELECT * FROM exemplaire WHERE idexemplaire = 1 OR idexemplaire = 4;
+
+IDEXEMPLAIRE DATEACHA STATUS          ISBN                                      
+------------ -------- --------------- ----------------                          
+           1 21/03/01 SUPPRIME        1520068789                                
+           4 15/04/00 SUPPRIME        1630014789                                
+
+SQL> SELECT * FROM empruntencours WHERE idexemplaire = 1 OR idexemplaire = 4;
+
+aucune ligne sélectionnée
+
+SQL> SELECT * FROM empruntarchive WHERE idexemplaire = 1 OR idexemplaire = 4;
+
+aucune ligne sélectionnée
+
+SQL> ROLLBACK;
+
+Annulation (rollback) effectuée.
+
+SQL> @p_suppr_utilisateur
+SQL> CREATE OR REPLACE
+  2  PROCEDURE p_suppr_utilisateur(
+  3  	 p_idUtilisateur IN utilisateur.idutilisateur%TYPE)
+  4  AS
+  5    test_validite INTEGER;
+  6  BEGIN
+  7    -- Test validité 'p_idUtilisateur'
+  8    SELECT COUNT(*)
+  9    INTO test_validite
+ 10    FROM utilisateur
+ 11    WHERE idUtilisateur = p_idUtilisateur;
+ 12    IF test_validite    = 0 THEN
+ 13  	 ROLLBACK;
+ 14  	 RAISE_APPLICATION_ERROR(-20016, 'Utilisateur n° ' || p_idUtilisateur || ' inconnu');
+ 15    END IF;
+ 16    -- Suppression des emprunts de l'utilisateur
+ 17    DELETE
+ 18    FROM empruntencours
+ 19    WHERE idutilisateur = p_idutilisateur;
+ 20    DELETE FROM empruntarchive WHERE idutilisateur = p_idutilisateur;
+ 21    -- Suppression des dépendances
+ 22    DELETE
+ 23    FROM adherent
+ 24    WHERE idutilisateur = p_idutilisateur;
+ 25    DELETE FROM employe WHERE idutilisateur = p_idutilisateur;
+ 26    -- Suppression de l'utilisateur
+ 27    DELETE
+ 28    FROM utilisateur
+ 29    where idutilisateur = p_idutilisateur;
+ 30  END p_suppr_utilisateur;
+ 31  /
+
+Procédure créée.
+
+SQL> show errors
+Pas d'erreur.
+SQL> -- ############# Tests unitaires
+SQL> SELECT * FROM utilisateur;
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+            1 COGAN                                                             
+Nicolas                                  101             cognico                
+21/03/87 H ADHERENT                                                             
+                                                                                
+            2 DURIEUX                                                           
+Elocia                                   100             durelo                 
+12/05/90 F EMPLOYE                                                              
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+                                                                                
+            3 ROUSSEL                                                           
+Sylvain                                  122             rousyl                 
+21/03/80 H EMPLOYE                                                              
+                                                                                
+            4 ROVIRAT                                                           
+Elodie                                   107             rovelo                 
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+21/03/91 F ADHERENT                                                             
+                                                                                
+            5 BUSSON                                                            
+Guillaume                                102             busgui                 
+21/02/88 H ADHERENT                                                             
+                                                                                
+            6 GALLAND                                                           
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+Aurelien                                 99              galaur                 
+21/09/84 H EMPLOYE                                                              
+                                                                                
+            7 COCOT                                                             
+Vincent                                  108             cocvinc                
+03/11/01 H ADHERENT                                                             
+                                                                                
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+            8 Zuccarelli                                                        
+Ange                                     101             angel46                
+07/08/87 H ADHERENT                                                             
+                                                                                
+            9 Retard                                                            
+enretard                                 101             retend                 
+07/08/87 H ADHERENT                                                             
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+                                                                                
+
+9 ligne(s) sélectionnée(s).
+
+SQL> EXECUTE p_suppr_utilisateur(1);
+
+Procédure PL/SQL terminée avec succès.
+
+SQL> execute p_suppr_utilisateur(2);
+
+Procédure PL/SQL terminée avec succès.
+
+SQL> SELECT * FROM utilisateur;
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+            3 ROUSSEL                                                           
+Sylvain                                  122             rousyl                 
+21/03/80 H EMPLOYE                                                              
+                                                                                
+            4 ROVIRAT                                                           
+Elodie                                   107             rovelo                 
+21/03/91 F ADHERENT                                                             
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+                                                                                
+            5 BUSSON                                                            
+Guillaume                                102             busgui                 
+21/02/88 H ADHERENT                                                             
+                                                                                
+            6 GALLAND                                                           
+Aurelien                                 99              galaur                 
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+21/09/84 H EMPLOYE                                                              
+                                                                                
+            7 COCOT                                                             
+Vincent                                  108             cocvinc                
+03/11/01 H ADHERENT                                                             
+                                                                                
+            8 Zuccarelli                                                        
+
+IDUTILISATEUR NOM                                                               
+------------- ----------------------------------------                          
+PRENOM                                   PWD             PSEUDONYME             
+---------------------------------------- --------------- --------------------   
+DATENAIS S CATEGORIEUTILIS                                                      
+-------- - ---------------                                                      
+Ange                                     101             angel46                
+07/08/87 H ADHERENT                                                             
+                                                                                
+            9 Retard                                                            
+enretard                                 101             retend                 
+07/08/87 H ADHERENT                                                             
+                                                                                
+
+7 ligne(s) sélectionnée(s).
+
+SQL> ROLLBACK;
+
+Annulation (rollback) effectuée.
+
+SQL> @f_compte_exemplaire
+SQL> CREATE OR REPLACE
+  2    FUNCTION f_compte_exemplaire(
+  3  	   p_isbn IN exemplaire.isbn%TYPE)
+  4  	 RETURN NUMBER
+  5    AS
+  6  	 test_validite INTEGER;
+  7  	 v_compteur    INTEGER;
+  8    BEGIN
+  9  	 -- Test validité 'p_isbn'
+ 10  	 SELECT COUNT(*)
+ 11  	 INTO test_validite
+ 12  	 FROM livre
+ 13  	 WHERE isbn	  = p_isbn;
+ 14  	 IF test_validite = 0 THEN
+ 15  	   ROLLBACK;
+ 16  	   RAISE_APPLICATION_ERROR(-20014, 'Livre ISBN n° ' || p_isbn || ' inconnu');
+ 17  	 END IF;
+ 18  	 -- Recupération du nombre de tuples 'exemplaire' ayant un status différent de 'supprime'
+ 19  	 SELECT COUNT(*)
+ 20  	 INTO v_compteur
+ 21  	 FROM exemplaire
+ 22  	 WHERE isbn  = p_isbn
+ 23  	 AND status != 'SUPPRIME';
+ 24  	 -- Renvoi de la valeur
+ 25  	 return v_compteur;
+ 26    END f_compte_exemplaire;
+ 27    /
+
+Fonction créée.
+
+SQL>   show errors
+Pas d'erreur.
+SQL>   -- ############# Tests unitaires
+SQL>   select * from exemplaire where isbn = '1520068789';
+
+IDEXEMPLAIRE DATEACHA STATUS          ISBN                                      
+------------ -------- --------------- ----------------                          
+           1 21/03/01 PRETE           1520068789                                
+           7 21/03/01 DISPONIBLE      1520068789                                
+
+SQL>   SELECT '1520068789' AS ISBN, f_compte_exemplaire('1520068789') AS "Nb Exemplaires non supprimés"
+  2    FROM dual;
+
+ISBN       Nb Exemplaires non supprimés                                         
+---------- ----------------------------                                         
+1520068789                            2                                         
+
+SQL> @p_new_emprunt_en_cours
+SQL> CREATE OR REPLACE
+  2  PROCEDURE p_new_emprunt_en_cours(
+  3  	 p_idexemplaire  IN empruntencours.idexemplaire%TYPE ,
+  4  	 p_idutilisateur IN empruntencours.idutilisateur%TYPE )
+  5  AS
+  6    test_validite		 INTEGER;
+  7    exemplaire_non_disponible EXCEPTION;
+  8    exemplaire_inconnu	 EXCEPTION;
+  9    utilisateur_inconnu	 EXCEPTION;
+ 10    v_resultat exemplaire.status%TYPE;
+ 11  BEGIN
+ 12    -- Test validité 'p_idExemplaire'
+ 13    SELECT COUNT(*)
+ 14    INTO test_validite
+ 15    FROM exemplaire
+ 16    WHERE idExemplaire = p_idExemplaire;
+ 17    IF test_validite   = 0 THEN
+ 18  	 RAISE exemplaire_inconnu;
+ 19    END IF;
+ 20    -- Test validité 'p_idUtilisateur'
+ 21    SELECT COUNT(*)
+ 22    INTO test_validite
+ 23    FROM utilisateur
+ 24    WHERE idutilisateur = p_idutilisateur;
+ 25    IF test_validite    = 0 THEN
+ 26  	 RAISE utilisateur_inconnu;
+ 27    END IF;
+ 28    -- Insertion du nouvel 'empruntencours'
+ 29    INSERT
+ 30    INTO empruntencours VALUES
+ 31  	 (
+ 32  	   p_idexemplaire,
+ 33  	   p_idutilisateur,
+ 34  	   SYSDATE
+ 35  	 );
+ 36    -- Vérification du status de 'empruntencours'
+ 37    SELECT status
+ 38    INTO v_resultat
+ 39    FROM exemplaire
+ 40    WHERE idexemplaire = p_idexemplaire;
+ 41    IF v_resultat	  = 'DISPONIBLE' THEN
+ 42  	 -- Si 'status' de 'exemplaire' disponible, update 'status' de 'exemplaire'
+ 43  	 UPDATE exemplaire
+ 44  	 SET status	    = 'PRETE'
+ 45  	 WHERE idexemplaire = p_idexemplaire;
+ 46    ELSE
+ 47  	 -- Sinon, levée de l'exception 'exemplaire_non_disponible' et rollback
+ 48  	 RAISE exemplaire_non_disponible;
+ 49    END IF;
+ 50  EXCEPTION
+ 51  WHEN exemplaire_inconnu THEN
+ 52    ROLLBACK;
+ 53    RAISE_APPLICATION_ERROR(-20015, 'Exemplaire n° ' || p_idexemplaire || ' inconnu', true);
+ 54  WHEN utilisateur_inconnu THEN
+ 55    ROLLBACK;
+ 56    RAISE_APPLICATION_ERROR(-20016, 'Utilisateur n° ' || p_idutilisateur || ' inconnu', true);
+ 57  WHEN exemplaire_non_disponible THEN
+ 58    ROLLBACK;
+ 59    raise_application_error(-20017, 'Exemplaire n° ' || p_idexemplaire || ' ne peut être emprunté. Status: ' || v_resultat, TRUE);
+ 60  END p_new_emprunt_en_cours;
+ 61  /
+
+Procédure créée.
+
+SQL> show errors
+Pas d'erreur.
+SQL> -- ############# Tests unitaires
+SQL> SELECT * FROM empruntencours;
+
+IDEXEMPLAIRE IDUTILISATEUR DATEEMPR                                             
+------------ ------------- --------                                             
+           1             1 20/10/09                                             
+           3             4 22/10/09                                             
+           6             7 25/10/09                                             
+           8             9 22/10/09                                             
+
+SQL> EXECUTE p_new_emprunt_en_cours(4, 1);
+
+Procédure PL/SQL terminée avec succès.
+
+SQL> EXECUTE p_new_emprunt_en_cours(5, 1);
+
+Procédure PL/SQL terminée avec succès.
+
+SQL> SELECT * FROM empruntencours;
+
+IDEXEMPLAIRE IDUTILISATEUR DATEEMPR                                             
+------------ ------------- --------                                             
+           1             1 20/10/09                                             
+           3             4 22/10/09                                             
+           6             7 25/10/09                                             
+           8             9 22/10/09                                             
+           4             1 02/06/16                                             
+           5             1 02/06/16                                             
+
+6 ligne(s) sélectionnée(s).
+
+SQL> --EXECUTE p_new_emprunt(6, 2);
+SQL> ROLLBACK;
+
+Annulation (rollback) effectuée.
+
+SQL> @t_suppr_emprunt_en_cours
+SQL> CREATE OR REPLACE TRIGGER t_suppr_emprunt_en_cours BEFORE
+  2    DELETE ON empruntencours FOR EACH ROW BEGIN
+  3    -- Update 'status' de 'exemplaire'
+  4    UPDATE exemplaire
+  5    SET status	  = 'DISPONIBLE'
+  6    WHERE idExemplaire = :old.idExemplaire;
+  7    -- Conversion en 'empruntarchive'
+  8    p_new_archive(:OLD.dateEmprunt, :OLD.idExemplaire, :OLD.idUtilisateur);
+  9  END;
+ 10  /
+
+Déclencheur créé.
+
+SQL> show errors
+Pas d'erreur.
+SQL> -- ############# Tests unitaires
+SQL> SELECT *
+  2  FROM exemplaire
+  3  WHERE idexemplaire = 1;
+
+IDEXEMPLAIRE DATEACHA STATUS          ISBN                                      
+------------ -------- --------------- ----------------                          
+           1 21/03/01 PRETE           1520068789                                
+
+SQL> SELECT * FROM empruntencours;
+
+IDEXEMPLAIRE IDUTILISATEUR DATEEMPR                                             
+------------ ------------- --------                                             
+           1             1 20/10/09                                             
+           3             4 22/10/09                                             
+           6             7 25/10/09                                             
+           8             9 22/10/09                                             
+
+SQL> DELETE FROM empruntencours WHERE idexemplaire = 1 AND idutilisateur = 1;
+
+1 ligne supprimée.
+
+SQL> SELECT * FROM exemplaire WHERE idexemplaire = 1;
+
+IDEXEMPLAIRE DATEACHA STATUS          ISBN                                      
+------------ -------- --------------- ----------------                          
+           1 21/03/01 DISPONIBLE      1520068789                                
+
+SQL> SELECT * FROM empruntencours;
+
+IDEXEMPLAIRE IDUTILISATEUR DATEEMPR                                             
+------------ ------------- --------                                             
+           3             4 22/10/09                                             
+           6             7 25/10/09                                             
+           8             9 22/10/09                                             
+
+SQL> ROLLBACK;
+
+Annulation (rollback) effectuée.
+
+SQL> --@t_majNbExemplaire_Livre
+SQL> 
+SQL> PROMPT	FIN NORMALE DU SCRIPT
+FIN NORMALE DU SCRIPT
+SQL> 
+SQL> -- Comportement par défaut
+SQL> spool off
