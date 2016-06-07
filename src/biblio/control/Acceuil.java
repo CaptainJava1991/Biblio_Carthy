@@ -11,17 +11,21 @@ import javax.swing.JTextPane;
 
 import java.awt.Panel;
 
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JList;
 
 import metier.BiblioException;
-import metier.EmpruntEnCoursDB;
+import metier.Employe;
+import metier.EmpruntEnCours;
+import metier.EnumCategorieEmploye;
 import metier.EnumStatusExemplaire;
 import metier.Exemplaire;
 import metier.Utilisateur;
 import dao.ConnectionFactory;
 import dao.EmpruntEnCoursDAO;
+import dao.EmpruntEnCoursDB;
 import dao.ExemplaireDAO;
 import dao.UtilisateurDAO;
 
@@ -30,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
@@ -48,7 +53,7 @@ public class Acceuil {
 	private Connection cnx ;
 	private JFrame frame;
 	private JTextField txtId;
-	private JTextField txtPassword;
+	private JPasswordField txtPassword;
 	private JPanel panel;
 	private JTextField txtRechercher;
 
@@ -112,7 +117,7 @@ public class Acceuil {
 		JLabel lblPassword = new JLabel("Password");
 		panel.add(lblPassword);
 		
-		txtPassword = new JTextField();
+		txtPassword = new JPasswordField();
 		panel.add(txtPassword);
 		txtPassword.setColumns(10);
 		
@@ -134,11 +139,26 @@ public class Acceuil {
 					txtId.setText("ERREUR");
 				}
 				
-				if(utilisateur.getPwd().equals(txtPassword.getText())){
-					initEmpruntRendrePanel();;
+				Employe employe = null;
+				
+				if(!(utilisateur instanceof Employe)){
+					txtId.setText("ERRONEE");
 				}else{
-					txtPassword.setText("ERREUR");
+					employe = (Employe) utilisateur;
+					if(!(employe.getCategorieEmploye() == EnumCategorieEmploye.BIBLIOTHECAIRE)){
+						txtId.setText("ERRONE");
+					}else{
+						if(utilisateur.getPwd().equals(txtPassword.getText())
+						&& (employe.getCategorieEmploye() 
+								== EnumCategorieEmploye.BIBLIOTHECAIRE)){
+							initEmpruntRendrePanel();;
+						}else{
+							txtPassword.setText("ERREUR");
+						}
+					}
 				}
+				
+				
 			}
 		});
 		
@@ -182,9 +202,6 @@ public class Acceuil {
 	private void EmprunterLivre(){
 		removeAll();
 		
-		final JLabel lbl = new JLabel(".............");
-		panel.add(lbl);
-		
 		JLabel lblId = new JLabel("IDExemplaire");
 		panel.add(lblId);
 		
@@ -205,7 +222,7 @@ public class Acceuil {
 				}
 				
 				if(exemplaire != null && exemplaire.getStatus() == EnumStatusExemplaire.DISPONIBLE ){
-					EmprunterUtilisateur();
+					EmprunterUtilisateur(exemplaire);
 				}else{
 					txtRechercher.setText("NON DISPONIBLE");
 				}
@@ -218,8 +235,10 @@ public class Acceuil {
 		panel.updateUI();
 	}
 	
-	private void EmprunterUtilisateur(){
+	private void EmprunterUtilisateur(Exemplaire exemplaire){
 		removeAll();
+		
+		final Exemplaire exemplaire2 = exemplaire;
 		
 		JLabel lblIdutilisateur = new JLabel("IDUtilisateur");
 		panel.add(lblIdutilisateur);
@@ -233,17 +252,30 @@ public class Acceuil {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					if(isConditionPretEnRetard(Integer.parseInt(txtId.getText()))){
+					Utilisateur utilisateur = retreveUtulisateur(Integer.parseInt(txtId.getText()));
+					if(isConditionPretAccepter(utilisateur)){
 						
+						EmpruntEnCours emprunt = new EmpruntEnCours(new Date(), utilisateur, exemplaire2);
+						EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
+						empruntDAO.insertEmpruntEnCours(emprunt);
+						initAcceuilPanel();
 					}
 				} catch (NumberFormatException | ClassNotFoundException
 						| SQLException | IOException | BiblioException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
 		panel.add(btnValider);
+		
+		JButton btnRetour = new JButton("Retour");
+		btnRetour.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				EmprunterLivre();
+			}
+		});
+		panel.add(btnRetour);
 		
 		panel.updateUI();
 	}
@@ -265,15 +297,14 @@ public class Acceuil {
 		return exemplaireDAO.findByKey(idExemplaire);
 	}
 
-	public int retreveNbExemplaire(int idUtilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
+	public boolean isConditionPretAccepter(Utilisateur utilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
-		EmpruntEnCoursDB[] tabEmprunt = empruntDAO.findByUtilisateur(idUtilisateur);
+		EmpruntEnCoursDB[] tabEmprunt = empruntDAO.findByUtilisateur(utilisateur.getIdUtilisateur());
+		for(int i = 0; i < tabEmprunt.length; i++){
+			new EmpruntEnCours(tabEmprunt[i].getDateEmprunt(), utilisateur, tabEmprunt[i].getExmeplaire());
+		}
 		
-		return tabEmprunt.length;
+		return utilisateur.isConditionsPretAcceptees();
 	}
 	
-	public boolean isConditionPretEnRetard(int IDUtilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
-		
-		return (retreveNbExemplaire(IDUtilisateur) >= 3)? false : true;
-	}
 }

@@ -74,6 +74,11 @@ public class Control {
 		textField.setColumns(10);
 		
 		JButton btnValider = new JButton("Valider");
+		btnValider.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
 		panel_1.add(btnValider);
 		
 

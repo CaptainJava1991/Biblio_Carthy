@@ -10,7 +10,6 @@ import java.sql.Statement;
 import biblio.control.EmpruntEnCoursDAOInterface;
 import metier.BiblioException;
 import metier.EmpruntEnCours;
-import metier.EmpruntEnCoursDB;
 
 public class EmpruntEnCoursDAO implements EmpruntEnCoursDAOInterface {
 	private Connection cnx;

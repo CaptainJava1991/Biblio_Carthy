@@ -3,9 +3,9 @@ package biblio.control;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import dao.EmpruntEnCoursDB;
 import metier.BiblioException;
 import metier.EmpruntEnCours;
-import metier.EmpruntEnCoursDB;
 
 public interface EmpruntEnCoursDAOInterface {
 

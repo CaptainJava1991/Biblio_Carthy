@@ -14,6 +14,10 @@ public class Employe extends Utilisateur {
 		categorieEmploye = ece;
 	}
 	
+	public EnumCategorieEmploye getCategorieEmploye(){
+		return categorieEmploye;
+	}
+	
 	public void setCodeMatricule(String codeMatricule){
 		this.codeMatricule = codeMatricule;
 	}

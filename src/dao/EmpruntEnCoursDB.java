@@ -1,6 +1,9 @@
-package metier;
+package dao;
 
 import java.util.Date;
+
+import metier.BiblioException;
+import metier.EmpruntEnCours;
 
 public class EmpruntEnCoursDB extends EmpruntEnCours{
 	private int idUtilisateur;

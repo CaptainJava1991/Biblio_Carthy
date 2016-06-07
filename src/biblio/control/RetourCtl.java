@@ -9,12 +9,12 @@ import javax.swing.JOptionPane;
 
 import metier.BiblioException;
 import metier.EmpruntEnCours;
-import metier.EmpruntEnCoursDB;
 import metier.EnumStatusExemplaire;
 import metier.Exemplaire;
 import metier.Utilisateur;
 import dao.ConnectionFactory;
 import dao.EmpruntEnCoursDAO;
+import dao.EmpruntEnCoursDB;
 import dao.ExemplaireDAO;
 import dao.Trigger;
 import dao.UtilisateurDAO;
