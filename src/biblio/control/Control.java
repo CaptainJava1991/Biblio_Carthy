@@ -26,6 +26,8 @@ import dao.ConnectionFactory;
 import dao.UtilisateurDAO;
 import javax.swing.JPasswordField;
 import java.awt.BorderLayout;
+import javax.swing.JTable;
+import java.awt.TextArea;
 
 public class Control {
 	
@@ -34,6 +36,8 @@ public class Control {
 	private JPanel panel;
 	private JTextField txtRechercher;	
 	private JTextField textField;
+	private JTable table;
+	private JTable table_1;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -64,7 +68,7 @@ public class Control {
 		frame.setResizable(false);
 		
 		JPanel panel_1 = new JPanel();
-		frame.getContentPane().add(panel_1, BorderLayout.CENTER);
+		frame.getContentPane().add(panel_1, BorderLayout.NORTH);
 		
 		JLabel lblIdutilisateur = new JLabel("IDUtilisateur");
 		panel_1.add(lblIdutilisateur);
@@ -80,6 +84,13 @@ public class Control {
 			}
 		});
 		panel_1.add(btnValider);
+		
+		JButton btnRetour = new JButton("Retour");
+		panel_1.add(btnRetour);
+		
+		
+		TextArea textArea = new TextArea();
+		frame.getContentPane().add(textArea, BorderLayout.CENTER);
 		
 
 		
