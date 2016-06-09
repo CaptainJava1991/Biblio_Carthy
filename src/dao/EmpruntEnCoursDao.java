@@ -122,7 +122,7 @@ public class EmpruntEnCoursDAO implements EmpruntEnCoursDAOInterface {
 		
 		while(rs.next()){
 			emprunt[i] = new EmpruntEnCoursDB(rs.getDate("dateEmprunt"), rs.getInt("idUtilisateur"), rs.getInt("idExemplaire"));
-			if(!Adherent.isPretEnRetard(emprunt[i])){
+			if(Adherent.isPretEnRetard(emprunt[i])){
 				empruntRetard[i] = emprunt[i];
 			}
 			i++;

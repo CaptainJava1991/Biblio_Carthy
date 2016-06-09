@@ -37,16 +37,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
-import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.TextArea;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
@@ -442,10 +436,12 @@ public class Acceuil {
 				EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
 				try {
 					EmpruntEnCoursDB[] empruntRetard = empruntDAO.retreveRetardEmprunt();
-					textArea.setText("");
+					textArea.setText(" ");
 					
 					for(int i = 0; i < empruntRetard.length; i++){
-						textArea.setText(textArea.getText() + "\n" + empruntRetard[i]);
+						if(empruntRetard[i] != null){
+							textArea.setText(textArea.getText() + "\n" + empruntRetard[i]);
+						}
 					}
 				} catch (SQLException | BiblioException e1) {
 					e1.printStackTrace();
@@ -462,7 +458,7 @@ public class Acceuil {
 				
 				try {
 					EmpruntEnCoursDB[] emprunt = empruntDAO.findAll();
-					textArea.setText("");
+					textArea.setText(" ");
 					
 					for(int i = 0; i < emprunt.length; i++){
 						textArea.setText(textArea.getText() + "\n" + emprunt[i]);
