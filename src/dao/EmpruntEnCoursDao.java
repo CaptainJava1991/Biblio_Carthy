@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import biblio.control.EmpruntEnCoursDAOInterface;
+import metier.Adherent;
 import metier.BiblioException;
 import metier.EmpruntEnCours;
 
@@ -84,6 +85,74 @@ public class EmpruntEnCoursDAO implements EmpruntEnCoursDAOInterface {
 				);
 		
 		prst.setInt(1, id);
+		
+		rs = prst.executeQuery();
+		
+		while(rs.next()){
+			emprunt[i] = new EmpruntEnCoursDB(rs.getDate("dateEmprunt"), rs.getInt("idUtilisateur"), rs.getInt("idExemplaire"));
+			i++;
+		}
+		
+		prst.close();
+		stmt.close();
+		
+		return emprunt;
+	}
+	
+	public EmpruntEnCoursDB[] retreveRetardEmprunt() throws SQLException, BiblioException{
+		EmpruntEnCoursDB[] emprunt = null;
+		EmpruntEnCoursDB[] empruntRetard = null;
+		int i = 0;
+		
+		//A la cnx, on demande un statement
+		Statement stmt = cnx.createStatement();
+		
+		//Init le tableau
+		ResultSet rs = stmt.executeQuery("select count(*) from EmpruntEnCours ");
+		rs.next();		
+		emprunt = new EmpruntEnCoursDB[rs.getInt(1)];
+		empruntRetard = new EmpruntEnCoursDB[rs.getInt(1)];
+		
+		//Tout les Emprunt de l'utilisateur
+		PreparedStatement prst = cnx.prepareCall(
+				"select * from EmpruntEncours"  
+				);
+		
+		rs = prst.executeQuery();
+		
+		while(rs.next()){
+			emprunt[i] = new EmpruntEnCoursDB(rs.getDate("dateEmprunt"), rs.getInt("idUtilisateur"), rs.getInt("idExemplaire"));
+			if(!Adherent.isPretEnRetard(emprunt[i])){
+				empruntRetard[i] = emprunt[i];
+			}
+			i++;
+		}
+		
+		prst.close();
+		stmt.close();
+		
+		return empruntRetard;
+	}
+	
+	public EmpruntEnCoursDB[] findAll() throws BiblioException, SQLException{
+		EmpruntEnCoursDB[] emprunt = null;
+		int i = 0;
+		
+		//A la cnx, on demande un statement
+		Statement stmt = cnx.createStatement();
+		
+		//Init le tableau
+		ResultSet rs = stmt.executeQuery("select count(*) from EmpruntEnCours");
+		rs.next();		
+		emprunt = new EmpruntEnCoursDB[rs.getInt(1)];
+		
+		
+		//Tout les Emprunt de l'utilisateur
+		PreparedStatement prst = cnx.prepareCall(
+				"select * from EmpruntEncours"  
+				);
+		
+
 		
 		rs = prst.executeQuery();
 		

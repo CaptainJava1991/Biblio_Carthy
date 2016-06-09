@@ -40,7 +40,7 @@ public class Adherent extends Utilisateur {
 		}
 	}
 	
-	private boolean isPretEnRetard(EmpruntEnCours ep){
+	public static boolean isPretEnRetard(EmpruntEnCours ep){
 		boolean limite;
 		SimpleDateFormat form = new SimpleDateFormat("dd/MM/yyyy");
 		

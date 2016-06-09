@@ -35,7 +35,6 @@ public class Control {
 	private JFrame frame;
 	private JPanel panel;
 	private JTextField txtRechercher;	
-	private JTextField textField;
 	private JTable table;
 	private JTable table_1;
 
@@ -70,14 +69,10 @@ public class Control {
 		JPanel panel_1 = new JPanel();
 		frame.getContentPane().add(panel_1, BorderLayout.NORTH);
 		
-		JLabel lblIdutilisateur = new JLabel("IDUtilisateur");
+		JLabel lblIdutilisateur = new JLabel("Responsable");
 		panel_1.add(lblIdutilisateur);
 		
-		textField = new JTextField();
-		panel_1.add(textField);
-		textField.setColumns(10);
-		
-		JButton btnValider = new JButton("Valider");
+		JButton btnValider = new JButton("Emprunt En Retard");
 		btnValider.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -85,8 +80,21 @@ public class Control {
 		});
 		panel_1.add(btnValider);
 		
-		JButton btnRetour = new JButton("Retour");
+		JButton btnRetour = new JButton("Emprunt En Cours");
+		btnRetour.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+			}
+		});
 		panel_1.add(btnRetour);
+		
+		JButton btnNewButton_1 = new JButton("Deconnection");
+		btnNewButton_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		panel_1.add(btnNewButton_1);
 		
 		
 		TextArea textArea = new TextArea();

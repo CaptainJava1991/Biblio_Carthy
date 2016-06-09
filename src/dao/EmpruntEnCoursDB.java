@@ -27,6 +27,7 @@ public class EmpruntEnCoursDB extends EmpruntEnCours{
 	public String toString(){
 		return "EmpruntEnCoursDB \t\n"
 				+ "\t\t idUtilisateur: " + idUtilisateur + "\n" 
-				+ "\t\t idExemplaire: " + idExemplaire + "\n\n";
+				+ "\t\t idExemplaire: " + idExemplaire + "\n"
+				+ "\t\t DateEmprunt: " + getDateEmprunt() + "\n\n";
 	}
 }

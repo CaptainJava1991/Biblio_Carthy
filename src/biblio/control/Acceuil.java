@@ -148,15 +148,29 @@ public class Acceuil {
 					txtId.setText("ERRONEE");
 				}else{
 					employe = (Employe) utilisateur;
-					if(!(employe.getCategorieEmploye() == EnumCategorieEmploye.BIBLIOTHECAIRE)){
-						txtId.setText("ERRONE");
-					}else{
+					if(employe.getCategorieEmploye() == EnumCategorieEmploye.BIBLIOTHECAIRE){
 						if(utilisateur.getPwd().equals(txtPassword.getText())
 						&& (employe.getCategorieEmploye() 
 								== EnumCategorieEmploye.BIBLIOTHECAIRE)){
-							initEmpruntRendrePanel();;
+							initEmpruntRendrePanel();
 						}else{
-							txtPassword.setText("ERREUR");
+							txtId.setText("ERREUR");
+						}
+					}else if(employe.getCategorieEmploye() == EnumCategorieEmploye.RESPONSABLE){
+						if(utilisateur.getPwd().equals(txtPassword.getText())
+						&& (employe.getCategorieEmploye() 
+								== EnumCategorieEmploye.RESPONSABLE)){
+							Responsable();
+						}else{
+							txtId.setText("ERREUR");
+						}
+					}else if(employe.getCategorieEmploye() == EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS){
+						if(utilisateur.getPwd().equals(txtPassword.getText())
+						&& (employe.getCategorieEmploye() 
+								== EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS)){
+							//Defnir les methode
+						}else{
+							txtId.setText("ERREUR");
 						}
 					}
 				}
@@ -331,7 +345,6 @@ public class Acceuil {
 		panel.updateUI();
 	}
 
-
 	private void RetourLivre(){
 		removeAll();
 		
@@ -386,6 +399,65 @@ public class Acceuil {
 		panel.updateUI();
 	}
 	
+	private void Responsable(){
+		removeAll();
+		
+		JButton btnValider = new JButton("Emprunt En Retard");
+		btnValider.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
+				try {
+					EmpruntEnCoursDB[] empruntRetard = empruntDAO.retreveRetardEmprunt();
+					textArea.setText("");
+					
+					for(int i = 0; i < empruntRetard.length; i++){
+						textArea.setText(textArea.getText() + "\n" + empruntRetard[i]);
+					}
+				} catch (SQLException | BiblioException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		panel.add(btnValider);
+		
+		JButton btnRetour = new JButton("Emprunt En Cours");
+		btnRetour.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
+				
+				try {
+					EmpruntEnCoursDB[] emprunt = empruntDAO.findAll();
+					textArea.setText("");
+					
+					for(int i = 0; i < emprunt.length; i++){
+						textArea.setText(textArea.getText() + "\n" + emprunt[i]);
+					}
+				} catch (BiblioException | SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		panel.add(btnRetour);
+		
+		JButton btnNewButton_1 = new JButton("Deconnection");
+		btnNewButton_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				initAcceuilPanel();
+			}
+		});
+		panel.add(btnNewButton_1);
+		
+		
+		textArea = new TextArea();
+		panel.add(textArea, BorderLayout.CENTER);
+		
+		panel.updateUI();
+	}
 	
 	private void removeAll(){
 		panel.removeAll();
@@ -410,6 +482,7 @@ public class Acceuil {
 		
 		return utilisateur.isConditionsPretAcceptees();
 	}
+
 	
 	private EmpruntEnCoursDB[] Info(Utilisateur utilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
