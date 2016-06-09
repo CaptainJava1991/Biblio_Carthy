@@ -37,6 +37,12 @@ public class Control {
 	private JTextField txtRechercher;	
 	private JTable table;
 	private JTable table_1;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JTextField textField_4;
+	private JTextField textField_5;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -67,38 +73,65 @@ public class Control {
 		frame.setResizable(false);
 		
 		JPanel panel_1 = new JPanel();
-		frame.getContentPane().add(panel_1, BorderLayout.NORTH);
+		frame.getContentPane().add(panel_1, BorderLayout.CENTER);
 		
-		JLabel lblIdutilisateur = new JLabel("Responsable");
-		panel_1.add(lblIdutilisateur);
-		
-		JButton btnValider = new JButton("Emprunt En Retard");
-		btnValider.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		panel_1.add(btnValider);
-		
-		JButton btnRetour = new JButton("Emprunt En Cours");
-		btnRetour.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-			}
-		});
-		panel_1.add(btnRetour);
-		
-		JButton btnNewButton_1 = new JButton("Deconnection");
+		JButton btnNewButton_1 = new JButton("Retour");
 		btnNewButton_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
+		
+		JLabel lblIsbn_1 = new JLabel("ISBN");
+		panel_1.add(lblIsbn_1);
+		
+		textField = new JTextField();
+		panel_1.add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("Titre");
+		panel_1.add(lblNewLabel_1);
+		
+		textField_1 = new JTextField();
+		panel_1.add(textField_1);
+		textField_1.setColumns(10);
+		
+		JLabel lblIdediteur = new JLabel("idEditeur");
+		panel_1.add(lblIdediteur);
+		
+		textField_2 = new JTextField();
+		panel_1.add(textField_2);
+		textField_2.setColumns(10);
+		
+		JLabel lblCodetheme = new JLabel("CodeTheme");
+		panel_1.add(lblCodetheme);
+		
+		textField_3 = new JTextField();
+		panel_1.add(textField_3);
+		textField_3.setColumns(10);
+		
+		JLabel lblAnneeDeParution = new JLabel("Annee De Parution");
+		panel_1.add(lblAnneeDeParution);
+		
+		textField_4 = new JTextField();
+		panel_1.add(textField_4);
+		textField_4.setColumns(10);
+		
+		JLabel lblNombreDePage = new JLabel("Nombre De Page");
+		panel_1.add(lblNombreDePage);
+		
+		textField_5 = new JTextField();
+		panel_1.add(textField_5);
+		textField_5.setColumns(10);
+		
+		JButton btnNewButton_2 = new JButton("Valider");
+		btnNewButton_2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		panel_1.add(btnNewButton_2);
 		panel_1.add(btnNewButton_1);
-		
-		
-		TextArea textArea = new TextArea();
-		frame.getContentPane().add(textArea, BorderLayout.CENTER);
 		
 
 		

@@ -53,7 +53,7 @@ public class UtilisateurDAO implements UtilisateurDAOInterface {
 					EnumCategorieEmploye.BIBLIOTHECAIRE.toString())) {
 				employe.setCategorieEmploye(EnumCategorieEmploye.BIBLIOTHECAIRE);
 			} else if (rs.getString("categorieEmploye").equals(
-					EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS.toString())) {
+					"GESTIONNAIRE")) {
 				employe.setCategorieEmploye(EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS);
 			} else if (rs.getString("categorieEmploye").equals(
 					EnumCategorieEmploye.RESPONSABLE.toString())) {
@@ -117,7 +117,7 @@ public class UtilisateurDAO implements UtilisateurDAOInterface {
 						EnumCategorieEmploye.BIBLIOTHECAIRE.toString())) {
 					employe.setCategorieEmploye(EnumCategorieEmploye.BIBLIOTHECAIRE);
 				} else if (rs.getString("categorieEmploye").equals(
-						EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS.toString())) {
+						"GESTIONNAIRE")) {
 					employe.setCategorieEmploye(EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS);
 				} else if (rs.getString("categorieEmploye").equals(
 						EnumCategorieEmploye.RESPONSABLE.toString())) {

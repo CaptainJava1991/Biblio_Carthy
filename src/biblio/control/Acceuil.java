@@ -11,6 +11,7 @@ import javax.swing.JTextPane;
 
 import java.awt.Panel;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -100,9 +101,8 @@ public class Acceuil {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
-		Container panell = frame.getContentPane();
 		panel = new JPanel();
-		frame.getContentPane().add(panel);
+		frame.getContentPane().add(panel, BorderLayout.CENTER);
 		
 		initAcceuilPanel();
 	}
@@ -139,38 +139,46 @@ public class Acceuil {
 				} catch (NumberFormatException | ClassNotFoundException
 						| SQLException | IOException e) {
 					e.printStackTrace();
-					txtId.setText("ERREUR");
+					txtId.setText("");
+					txtPassword.setText("");
+					JOptionPane.showMessageDialog(null, "Utilisateur introuvable");
 				}
 				
 				Employe employe = null;
 				
 				if(!(utilisateur instanceof Employe)){
-					txtId.setText("ERRONEE");
+					txtId.setText("");
+					txtPassword.setText("");
+					JOptionPane.showMessageDialog(null, "Identifiez vous comme employé");
 				}else{
 					employe = (Employe) utilisateur;
 					if(employe.getCategorieEmploye() == EnumCategorieEmploye.BIBLIOTHECAIRE){
-						if(utilisateur.getPwd().equals(txtPassword.getText())
-						&& (employe.getCategorieEmploye() 
-								== EnumCategorieEmploye.BIBLIOTHECAIRE)){
+						if(utilisateur.getPwd().equals(txtPassword.getText())){
 							initEmpruntRendrePanel();
 						}else{
-							txtId.setText("ERREUR");
+							txtId.setText("");
+							txtPassword.setText("");
+							JOptionPane.showMessageDialog(null, "Mot de passe erroné");
 						}
 					}else if(employe.getCategorieEmploye() == EnumCategorieEmploye.RESPONSABLE){
 						if(utilisateur.getPwd().equals(txtPassword.getText())
 						&& (employe.getCategorieEmploye() 
 								== EnumCategorieEmploye.RESPONSABLE)){
-							Responsable();
+							responsable();
 						}else{
-							txtId.setText("ERREUR");
+							txtId.setText("");
+							txtPassword.setText("");
+							JOptionPane.showMessageDialog(null, "Mot de passe erroné");
 						}
 					}else if(employe.getCategorieEmploye() == EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS){
 						if(utilisateur.getPwd().equals(txtPassword.getText())
 						&& (employe.getCategorieEmploye() 
 								== EnumCategorieEmploye.GESTIONNAIRE_DE_FONDS)){
-							//Defnir les methode
+							gestionnaireDeFond();
 						}else{
-							txtId.setText("ERREUR");
+							txtId.setText("");
+							txtPassword.setText("");
+							JOptionPane.showMessageDialog(null, "Mot de passe erroné");
 						}
 					}
 				}
@@ -191,7 +199,7 @@ public class Acceuil {
 		btnEmprunter.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				EmprunterLivre();
+				emprunterLivre();
 			}
 		});
 		panel.add(btnEmprunter);
@@ -200,7 +208,7 @@ public class Acceuil {
 		btnRendre.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				RetourLivre();
+				retourLivre();
 			}
 		});
 		panel.add(btnRendre);
@@ -217,7 +225,7 @@ public class Acceuil {
 		panel.updateUI();
 	}
 	
-	private void EmprunterLivre(){
+	private void emprunterLivre(){
 		removeAll();
 		
 		JLabel lblId = new JLabel("IDExemplaire");
@@ -235,14 +243,16 @@ public class Acceuil {
 				try {
 					exemplaire = retreveExemplaire(Integer.parseInt(txtRechercher.getText()));
 				} catch (NumberFormatException | SQLException e1) {
-					txtRechercher.setText("ERREUR");
+					txtRechercher.setText("");
+					JOptionPane.showMessageDialog(null, "Exemplaire introuvable");
 					e1.printStackTrace();
 				}
 				
 				if(exemplaire != null && exemplaire.getStatus() == EnumStatusExemplaire.DISPONIBLE ){
-					EmprunterUtilisateur(exemplaire);
+					emprunterUtilisateur(exemplaire);
 				}else{
-					txtRechercher.setText("NON DISPONIBLE");
+					txtRechercher.setText("");
+					JOptionPane.showMessageDialog(null, "Exemplaire non disponible");
 				}
 			}
 		});
@@ -261,7 +271,7 @@ public class Acceuil {
 		panel.updateUI();
 	}
 	
-	private void EmprunterUtilisateur(Exemplaire exemplaire){
+	private void emprunterUtilisateur(Exemplaire exemplaire){
 		removeAll();
 		
 		final Exemplaire exemplaire2 = exemplaire;
@@ -286,12 +296,14 @@ public class Acceuil {
 						empruntDAO.insertEmpruntEnCours(emprunt);
 						initEmpruntRendrePanel();
 					}else{
-						txtId.setText("Retard ou + de 3 ex");
+						txtId.setText("");
+						JOptionPane.showMessageDialog(null, "L'utilisateur a plus de 3 exemplaire ou est en retard sur un exemplaire");
 					}
 				} catch (NumberFormatException | ClassNotFoundException
 						| SQLException | IOException | BiblioException e1) {
 					e1.printStackTrace();
-					txtId.setText("ERRONEE");
+					txtId.setText("");
+					JOptionPane.showMessageDialog(null, "Utilisateur introuvable");
 				}
 			}
 		});
@@ -301,7 +313,7 @@ public class Acceuil {
 		btnRetour.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				EmprunterLivre();
+				emprunterLivre();
 			}
 		});
 		panel.add(btnRetour);
@@ -321,10 +333,11 @@ public class Acceuil {
 				} catch (NumberFormatException | ClassNotFoundException
 						| SQLException | IOException e1) {
 					e1.printStackTrace();
-					txtId.setText("ERRONEE");
+					txtId.setText("");
+					JOptionPane.showMessageDialog(null, "Utilisateur introuvable");
 				}
 				try {
-					EmpruntEnCoursDB[] tabEmpruntDB = Info(utilisateur);
+					EmpruntEnCoursDB[] tabEmpruntDB = info(utilisateur);
 					textArea.setText(" ");
 					
 					for(int i = 0; i < tabEmpruntDB.length; i++){
@@ -345,7 +358,7 @@ public class Acceuil {
 		panel.updateUI();
 	}
 
-	private void RetourLivre(){
+	private void retourLivre(){
 		removeAll();
 		
 		JLabel lblIdLivre = new JLabel("IDLivre");
@@ -367,6 +380,8 @@ public class Acceuil {
 					exemplaire = exemplaireDAO.findByKey(Integer.parseInt(txtId.getText()));
 				} catch (NumberFormatException | SQLException e1) {
 					e1.printStackTrace();
+					txtId.setText("");
+					JOptionPane.showMessageDialog(null, "Exemplaire introuvable");
 				}
 				
 				if(exemplaire.getStatus() == EnumStatusExemplaire.PRETE){
@@ -399,11 +414,11 @@ public class Acceuil {
 		panel.updateUI();
 	}
 	
-	private void Responsable(){
+	private void responsable(){
 		removeAll();
 		
-		JButton btnValider = new JButton("Emprunt En Retard");
-		btnValider.addMouseListener(new MouseAdapter() {
+		JButton btnEmpruntEnRetard = new JButton("Emprunt En Retard");
+		btnEmpruntEnRetard.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
@@ -419,10 +434,10 @@ public class Acceuil {
 				}
 			}
 		});
-		panel.add(btnValider);
+		panel.add(btnEmpruntEnRetard);
 		
-		JButton btnRetour = new JButton("Emprunt En Cours");
-		btnRetour.addMouseListener(new MouseAdapter() {
+		JButton btnEmprunEnCours = new JButton("Emprunt En Cours");
+		btnEmprunEnCours.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
@@ -441,20 +456,51 @@ public class Acceuil {
 				
 			}
 		});
-		panel.add(btnRetour);
+		panel.add(btnEmprunEnCours);
 		
-		JButton btnNewButton_1 = new JButton("Deconnection");
-		btnNewButton_1.addMouseListener(new MouseAdapter() {
+		JButton btnDeconnection = new JButton("Deconnection");
+		btnDeconnection.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				initAcceuilPanel();
 			}
 		});
-		panel.add(btnNewButton_1);
+		panel.add(btnDeconnection);
 		
 		
 		textArea = new TextArea();
 		panel.add(textArea, BorderLayout.CENTER);
+		
+		panel.updateUI();
+	}
+
+	private void gestionnaireDeFond(){
+		removeAll();
+		
+		JButton btnCreer = new JButton("Creer Un Livre");
+		btnCreer.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		panel.add(btnCreer);
+		
+		JButton btnNew = new JButton("Nouvelle Exemplaire");
+		btnNew.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+			}
+		});
+		panel.add(btnNew);
+		
+		JButton btnDeconnection = new JButton("Deconnection");
+		btnDeconnection.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				initAcceuilPanel();
+			}
+		});
+		panel.add(btnDeconnection);
 		
 		panel.updateUI();
 	}
@@ -484,7 +530,7 @@ public class Acceuil {
 	}
 
 	
-	private EmpruntEnCoursDB[] Info(Utilisateur utilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
+	private EmpruntEnCoursDB[] info(Utilisateur utilisateur) throws ClassNotFoundException, SQLException, IOException, BiblioException{
 		EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
 		EmpruntEnCoursDB[] tabEmprunt = empruntDAO.findByUtilisateur(utilisateur.getIdUtilisateur());
 		
