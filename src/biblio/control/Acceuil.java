@@ -199,7 +199,7 @@ public class Acceuil {
 		btnEmprunter.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				emprunterLivre();
+				emprunterUtilisateur();
 			}
 		});
 		panel.add(btnEmprunter);
@@ -225,8 +225,9 @@ public class Acceuil {
 		panel.updateUI();
 	}
 	
-	private void emprunterLivre(){
+	private void emprunterLivre(Utilisateur utilisateur){
 		removeAll();
+		final Utilisateur utilisateur2 = utilisateur;
 		
 		JLabel lblId = new JLabel("IDExemplaire");
 		panel.add(lblId);
@@ -242,6 +243,8 @@ public class Acceuil {
 				Exemplaire exemplaire = null;
 				try {
 					exemplaire = retreveExemplaire(Integer.parseInt(txtRechercher.getText()));
+					
+					
 				} catch (NumberFormatException | SQLException e1) {
 					txtRechercher.setText("");
 					JOptionPane.showMessageDialog(null, "Exemplaire introuvable");
@@ -249,7 +252,23 @@ public class Acceuil {
 				}
 				
 				if(exemplaire != null && exemplaire.getStatus() == EnumStatusExemplaire.DISPONIBLE ){
-					emprunterUtilisateur(exemplaire);
+					
+					EmpruntEnCours emprunt = null;
+					try {
+						emprunt = new EmpruntEnCours(new Date(), utilisateur2, exemplaire);
+					} catch (BiblioException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
+					try {
+						empruntDAO.insertEmpruntEnCours(emprunt);
+					} catch (ClassNotFoundException | SQLException
+							| IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					initEmpruntRendrePanel();
 				}else{
 					txtRechercher.setText("");
 					JOptionPane.showMessageDialog(null, "Exemplaire non disponible");
@@ -262,7 +281,7 @@ public class Acceuil {
 		btnRetour.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				initEmpruntRendrePanel();
+				emprunterUtilisateur();
 			}
 		});
 		panel.add(btnRetour);
@@ -271,10 +290,8 @@ public class Acceuil {
 		panel.updateUI();
 	}
 	
-	private void emprunterUtilisateur(Exemplaire exemplaire){
+	private void emprunterUtilisateur(){
 		removeAll();
-		
-		final Exemplaire exemplaire2 = exemplaire;
 		
 		JLabel lblIdutilisateur = new JLabel("IDUtilisateur");
 		panel.add(lblIdutilisateur);
@@ -287,23 +304,24 @@ public class Acceuil {
 		btnValider.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				Utilisateur utilisateur = null;
 				try {
-					Utilisateur utilisateur = retreveUtulisateur(Integer.parseInt(txtId.getText()));
+					utilisateur = retreveUtulisateur(Integer.parseInt(txtId.getText()));
 					if(isConditionsPretAcceptees(utilisateur)){
-						
-						EmpruntEnCours emprunt = new EmpruntEnCours(new Date(), utilisateur, exemplaire2);
-						EmpruntEnCoursDAO empruntDAO = new EmpruntEnCoursDAO(cnx);
-						empruntDAO.insertEmpruntEnCours(emprunt);
-						initEmpruntRendrePanel();
+						emprunterLivre(utilisateur);
 					}else{
 						txtId.setText("");
-						JOptionPane.showMessageDialog(null, "L'utilisateur a plus de 3 exemplaire ou est en retard sur un exemplaire");
+						JOptionPane.showMessageDialog(null, "L'utilisateur a plus de 3 exemplaire");
 					}
 				} catch (NumberFormatException | ClassNotFoundException
 						| SQLException | IOException | BiblioException e1) {
 					e1.printStackTrace();
 					txtId.setText("");
-					JOptionPane.showMessageDialog(null, "Utilisateur introuvable");
+					if(utilisateur == null){
+						JOptionPane.showMessageDialog(null, "Utilisateur introuvable");
+					}else{
+						JOptionPane.showMessageDialog(null, "Retard sur un exemplaire");
+					}
 				}
 			}
 		});
@@ -313,7 +331,7 @@ public class Acceuil {
 		btnRetour.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				emprunterLivre();
+				initEmpruntRendrePanel();
 			}
 		});
 		panel.add(btnRetour);
@@ -361,7 +379,7 @@ public class Acceuil {
 	private void retourLivre(){
 		removeAll();
 		
-		JLabel lblIdLivre = new JLabel("IDLivre");
+		JLabel lblIdLivre = new JLabel("IDExemplaire");
 		panel.add(lblIdLivre);
 		
 		txtId = new JTextField();
